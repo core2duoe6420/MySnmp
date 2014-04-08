@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\View">
+      <UniqueIdentifier>{f3e7413f-b559-4bf8-b2ad-b1a47b0eb842}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Core">
+      <UniqueIdentifier>{0153a293-ed0c-4e53-b586-4820a1e8764a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\View">
+      <UniqueIdentifier>{431f0110-bafc-43db-9fcf-b10e813d7f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Core">
+      <UniqueIdentifier>{1d8fc379-18f4-4199-8b91-b547acf8e888}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Resource">
+      <UniqueIdentifier>{bce0b36d-140d-4666-b852-50e1107af0de}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\MySnmp\Config.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\debug.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\Host.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\HostConfig.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\Lock.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\OidNode.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\OidTree.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\RequestManager.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\SafeType.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\Semaphore.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\SnmpRequest.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\SnmpRequestConfig.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\SnmpResult.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\Thread.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\View\TopoCanvas.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\View\FrmMain.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Config.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Host.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HostConfig.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OidNode.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OidTree.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RequestManager.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SnmpGetRequest.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Thread.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FrmMain.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopoCanvas.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SnmpApp.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MySnmp.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\icon.xpm">
+      <Filter>头文件\Resource</Filter>
+    </None>
+  </ItemGroup>
+</Project>
