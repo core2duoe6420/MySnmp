@@ -33,6 +33,7 @@ void TopoCanvas::OnPaint(wxPaintEvent& event) {
 	DoPrepareDC(dc);
 	dc.SetBackground(*wxWHITE_BRUSH);
 	dc.Clear();
+
 	wxList::compatibility_iterator node = topoHosts.GetFirst();
 	while (node) {
 		TopoHost * topoHost = (TopoHost*)node->GetData();
@@ -120,7 +121,7 @@ void TopoCanvas::OnVirtualEdgeAndExpand(const wxPoint& eventPoint, int threshold
 	
 	this->SetVirtualSize(this->GetVirtualSize() + wxSize(abs(horizonalDelta), abs(verticalDelta)));
 	if (horizonalDelta < 0 || verticalDelta < 0) {
-		this->Scroll(wxPoint(abs(horizonalDelta) / scrollRate, abs(verticalDelta) / scrollRate));
+		this->Scroll(GetViewStart() + wxPoint(abs(horizonalDelta) / scrollRate, abs(verticalDelta) / scrollRate));
 		wxList::compatibility_iterator node = topoHosts.GetFirst();
 		while (node) {
 			TopoHost * topoHost = (TopoHost*)node->GetData();
@@ -131,7 +132,7 @@ void TopoCanvas::OnVirtualEdgeAndExpand(const wxPoint& eventPoint, int threshold
 }
 
 void TopoCanvas::DrawBitmap(const wxBitmap& host, const wxPoint& point) {
-	TopoHost * topoHost = new TopoHost(host, point);
+	TopoHost * topoHost = new TopoHost(host, point, this, "这是一台新主机");
 	topoHosts.Append(topoHost);
 	refreshCanvas();
 }

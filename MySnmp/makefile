@@ -5,17 +5,19 @@ SOURCES=$(wildcard src/*.cpp)
 OBJS:=$(patsubst %.cpp,%.o,$(SOURCES))
 
 MySnmp:$(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) -o $@.out
-	cd src;rm -f *.d;
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
 
 -include $(SOURCES:.cpp=.d)
 
 %.d:%.cpp
-	set -e; rm -f $@; \
-	$(CC) -MM $(CPPFLAGS) $< >$@.$$$$;\
-	sed 's,\($*\).o[ :]*,\1.o $@:,' < $@.$$$$ >$@;\
-	rm -f $@.$$$$
+	set -e;rm -f $@;\
+	echo '$(@F)' > $@.tmp;\
+	tmpname=`cat $@.tmp`;\
+	tmpname=$${tmpname%%.*};\
+	$(CC) -MM $(CPPFLAGS) $< >$@.tmp;\
+	sed "s,\($${tmpname}\).o:,$(@D)/\1.o $@:," < $@.tmp >$@;\
+	rm -f $@.tmp;
 
 .PHONY:clean
 clean:
-	rm -f *.o *.d *.out;cd src;rm -f *.o *.d *.out
+	rm -f *.o *.out *.d;cd src;rm -f *.o *.out *.d
