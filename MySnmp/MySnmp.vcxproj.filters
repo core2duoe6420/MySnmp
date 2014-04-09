@@ -28,6 +28,9 @@
     <Filter Include="头文件\Resource">
       <UniqueIdentifier>{bce0b36d-140d-4666-b852-50e1107af0de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Command">
+      <UniqueIdentifier>{d727c69e-80c0-4f00-8ce2-463738bcab0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\MySnmp\Config.h">
@@ -78,6 +81,18 @@
     <ClInclude Include="include\MySnmp\View\FrmMain.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
+    <ClInclude Include="include\MySnmp\HostManager.h">
+      <Filter>头文件\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\Command\HostCommand.h">
+      <Filter>头文件\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\Command\Command.h">
+      <Filter>头文件\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\View\DiaAddHost.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Config.cpp">
@@ -111,6 +126,12 @@
       <Filter>源文件\View</Filter>
     </ClCompile>
     <ClCompile Include="src\SnmpApp.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HostManager.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DiaAddHost.cpp">
       <Filter>源文件\View</Filter>
     </ClCompile>
   </ItemGroup>

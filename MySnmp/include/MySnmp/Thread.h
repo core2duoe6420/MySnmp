@@ -32,9 +32,7 @@ namespace mysnmp {
 
 		~Thread() {}
 
-		inline int GetInnerId() {
-			return innerId;
-		}
+		int GetInnerId() { return innerId; }
 
 		bool Run(void * data);
 		bool Join(void ** retval);

@@ -9,6 +9,7 @@ namespace mysnmp {
 	class FrmMain : public wxFrame {
 	public:
 		FrmMain(const wxString& title, const wxPoint& pos, const wxSize& size);
+		TopoCanvas * GetCanvas() { return canvas; }
 
 	private:
 		void OnExit(wxCloseEvent& event);

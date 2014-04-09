@@ -2,6 +2,9 @@
 
 #include <MySnmp/View/FrmMain.h>
 #include <MySnmp/View/TopoCanvas.h>
+#include <MySnmp/View/DiaAddHost.h>
+#include <MySnmp/Command/HostCommand.h>
+
 #include <MySnmp/debug.h>
 
 using namespace mysnmp;
@@ -13,8 +16,9 @@ void FrmMain::OnExit(wxCloseEvent& event) {
 #include <icon.xpm>
 
 FrmMain::FrmMain(const wxString& title, const wxPoint& pos, const wxSize& size) :
-	wxFrame(NULL, wxID_ANY, title, pos, size), 
-	ID_menuAddHost(wxNewId()), ID_menuExit(wxNewId()), ID_tbAddHost(wxNewId()) {
+wxFrame(NULL, wxID_ANY, title, pos, size),
+ID_menuAddHost(wxNewId()), ID_menuExit(wxNewId()), ID_tbAddHost(wxNewId()) {
+	this->Center();
 	menuInitialize();
 	toolbarInitialize();
 	canvasInitialize();
@@ -58,13 +62,29 @@ void FrmMain::toolbarInitialize() {
 
 void FrmMain::canvasInitialize() {
 	wxBoxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	this->canvas = new TopoCanvas(this, wxSize(1000,1000), 20);
+	this->canvas = new TopoCanvas(this, wxSize(1000, 1000), 20);
 	sizer->Add(canvas, 1, wxGROW, 0);
 	this->SetSizer(sizer);
 }
 
 void FrmMain::OnAddHostClick(wxCommandEvent& event) {
-	this->canvas->DrawBitmap(wxBitmap("image/Host.png", wxBITMAP_TYPE_PNG), wxPoint(50, 50));
+	DiaAddHost * diaAddHost = new DiaAddHost(this, L"添加新主机");
+	if (diaAddHost->ShowModal() == wxID_OK) {
+		AddHostCommand command;
+		command.SetRetryTimes(diaAddHost->GetRetryTimes());
+		command.SetTimeout(diaAddHost->GetTimeout());
+		command.SetIpAddress(diaAddHost->GetIpAddress());
+		command.SetReadCommunity(diaAddHost->GetReadCommunity());
+		command.SetWriteCommunity(diaAddHost->GetWriteCommunity());
+		command.SetUdpPort(diaAddHost->GetUDPPort());
+		command.SetSnmpVersion(diaAddHost->GetVersion());
+		int hostId = command.Execute();
+		this->canvas->DrawBitmap(hostId, wxBitmap("image/Host.png", wxBITMAP_TYPE_PNG),
+			wxPoint(50, 50), diaAddHost->GetIpAddress(), diaAddHost->GetName());
+	}
+
+	diaAddHost->Destroy();
+
 }
 
 void FrmMain::OnMenuExitClick(wxCommandEvent& event) {

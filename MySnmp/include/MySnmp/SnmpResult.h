@@ -20,55 +20,27 @@ namespace mysnmp {
 
 	public:
 		SnmpResult(SnmpType type, Host& host, int requestId) :
-			type(type), host(host), requestId(requestId), 
+			type(type), host(host), requestId(requestId),
 			snmpErrStatus(0), pduErrStatus(0), errMsg(NULL) {}
 
 		~SnmpResult() {}
 
-		inline void SetErrMsg(const char * err) {
-			this->errMsg = err;
-		}
+		void SetErrMsg(const char * err) { this->errMsg = err; }
+		const char * GetErrMsg() { return this->errMsg; }
+		void SetPduErrStatus(int err) { this->pduErrStatus = err; }
+		int GetPduErrStatus() { return this->pduErrStatus; }
+		void SetSnmpErrStatus(int err) { this->snmpErrStatus = err; }
+		int GetSnmpErrStatus() { return this->snmpErrStatus; }
+		int GetRequestId() const { return requestId; }
+		void AddVb(Snmp_pp::Vb& vb) { vblist.push_back(vb); }
 
-		inline const char * GetErrMsg() {
-			return this->errMsg;
-		}
-
-		inline void SetPduErrStatus(int err) {
-			this->pduErrStatus = err;
-		}
-
-		inline int GetPduErrStatus() {
-			return this->pduErrStatus;
-		}
-
-		inline void SetSnmpErrStatus(int err) {
-			this->snmpErrStatus = err;
-		}
-
-		inline int GetSnmpErrStatus() {
-			return this->snmpErrStatus;
-		}
-
-		inline int GetRequestId() const {
-			return requestId;
-		}
-
-		inline void AddVb(Snmp_pp::Vb& vb) {
-			vblist.push_back(vb);
-		}
-
-		inline void AddVb(Snmp_pp::Vb * vbs, int count) {
+		void AddVb(Snmp_pp::Vb * vbs, int count) {
 			for (int i = 0; i < count; i++)
 				vblist.push_back(vbs[i]);
 		}
 
-		inline const std::vector<Snmp_pp::Vb>& GetVbList() const {
-			return vblist;
-		}
-
-		inline Host& GetHost() const {
-			return host;
-		}
+		const std::vector<Snmp_pp::Vb>& GetVbList() const { return vblist; }
+		Host& GetHost() const { return host; }
 	};
 }
 

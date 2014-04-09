@@ -54,6 +54,7 @@ void * SnmpGetRequest::Run(void * data) {
 
 	if (result->GetErrMsg() == NULL) {
 		CTarget target(request->host.GetAddress());
+		target.set_retry(request->host.GetConfig().GetRetryTimes());
 		target.set_timeout(request->host.GetConfig().GetTimeout());
 		target.set_readcommunity(request->host.GetConfig().GetReadCommunity());
 		target.set_writecommunity(request->host.GetConfig().GetWriteCommunity());
@@ -61,6 +62,7 @@ void * SnmpGetRequest::Run(void * data) {
 
 		int status;
 		Snmp snmp(status);
+		
 		if (status != SNMP_CLASS_SUCCESS)
 			result->SetErrMsg((char *)snmp.error_msg(status));
 

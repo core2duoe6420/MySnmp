@@ -2,6 +2,7 @@
 
 #include <MySnmp/debug.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
 
 using namespace mysnmp;
 
@@ -11,9 +12,50 @@ EVT_PAINT(TopoCanvas::OnPaint)
 EVT_SIZE(TopoCanvas::OnSize)
 END_EVENT_TABLE()
 
+TopoHost::TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
+TopoCanvas * canvas, const wxString& ipAddress, const wxString& name) :
+hostId(hostId), bitmap(bitmap), point(point), ipAddress(ipAddress), name(name) {
+	/* lblName仅仅用来获得文字大小 */
+	wxStaticBox * lblName = lblName = new wxStaticBox(canvas, wxID_ANY, name);
+	wxSize lblSize = lblName->GetEffectiveMinSize();
+	/* 功成身退 */
+	lblName->Destroy();
+
+	int lblx, lbly;
+	/* 做一些小修正 */
+	/* Ubuntu下修正量较小 */
+#ifdef _WIN32
+	int x_modvalue = 7;
+#else
+	int x_modvalue = 4;
+#endif
+	lblx = (bitmap.GetSize().GetWidth() - lblSize.GetWidth()) / 2 + x_modvalue;
+	lbly = lblSize.GetHeight() - 5;
+	if (lblx < 0)
+		lblx = 0;
+
+	wxImage image = bitmap.ConvertToImage();
+	/* Ubuntu下透明bitmap用GCDC仍然无法绘制字
+	* Windows下用GCDC效果差的一塌糊涂
+	* 我完全不知道如何解决这些问题
+	*/
+#ifdef _WIN32
+	image.Resize(bitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly));
+#else
+	image.Resize(bitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly), 255, 255, 255);
+#endif
+	this->bitmap = wxBitmap(image);
+
+	wxMemoryDC memDC(this->bitmap);
+	wxGCDC gcdc(memDC);
+	wxFont font(9, wxFONTFAMILY_TELETYPE, wxNORMAL, wxBOLD);
+	gcdc.SetFont(font);
+	gcdc.DrawText(name, lblx, 0);
+	memDC.SelectObject(wxNullBitmap);
+}
 
 TopoCanvas::TopoCanvas(wxWindow * parent, const wxSize& virtualSize, int scrollRate) :
-wxScrolledCanvas(parent), scrollRate(scrollRate), dragStatus(0){
+wxScrolledCanvas(parent), scrollRate(scrollRate), dragStatus(0) {
 	this->SetVirtualSize(virtualSize);
 	this->SetScrollRate(scrollRate, scrollRate);
 }
@@ -25,6 +67,17 @@ TopoCanvas::~TopoCanvas() {
 		delete topoHost;
 		node = node->GetNext();
 	}
+}
+
+TopoHost * TopoCanvas::GetHost(const wxString& ipAddress) {
+	wxList::compatibility_iterator node = topoHosts.GetFirst();
+	while (node) {
+		TopoHost * topoHost = (TopoHost*)node->GetData();
+		if (topoHost->GetIpAddress() == ipAddress)
+			return topoHost;
+		node = node->GetNext();
+	}
+	return NULL;
 }
 
 void TopoCanvas::OnPaint(wxPaintEvent& event) {
@@ -118,7 +171,7 @@ void TopoCanvas::OnVirtualEdgeAndExpand(const wxPoint& eventPoint, int threshold
 		verticalDelta = delta;
 	else if (eventLogicalPoint.y <= threshold)
 		verticalDelta = -delta;
-	
+
 	this->SetVirtualSize(this->GetVirtualSize() + wxSize(abs(horizonalDelta), abs(verticalDelta)));
 	if (horizonalDelta < 0 || verticalDelta < 0) {
 		this->Scroll(GetViewStart() + wxPoint(abs(horizonalDelta) / scrollRate, abs(verticalDelta) / scrollRate));
@@ -131,8 +184,9 @@ void TopoCanvas::OnVirtualEdgeAndExpand(const wxPoint& eventPoint, int threshold
 	}
 }
 
-void TopoCanvas::DrawBitmap(const wxBitmap& host, const wxPoint& point) {
-	TopoHost * topoHost = new TopoHost(host, point, this, "这是一台新主机");
+void TopoCanvas::DrawBitmap(int hostId, const wxBitmap& host,
+	const wxPoint& point, const wxString& ipAddress, const wxString& name) {
+	TopoHost * topoHost = new TopoHost(hostId, host, point, this, ipAddress, name);
 	topoHosts.Append(topoHost);
 	refreshCanvas();
 }

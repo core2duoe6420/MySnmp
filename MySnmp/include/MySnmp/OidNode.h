@@ -55,47 +55,22 @@ namespace mysnmp {
 		std::string ToDottedString() const;
 		std::string ToNameString() const;
 
-		inline OidTypeEnum GetTypeEnum() const {
-			return this->type;
-		}
-
-		inline OidAccessEnum GetAccessEnum() const {
-			return this->access;
-		}
-
-		inline OidStatusEnum GetStatusEnum() const {
-			return this->status;
-		}
-
-		inline void AddChild(OidNode * child) {
+		void AddChild(OidNode * child) {
 			child->sibling = this->child;
 			this->child = child;
 			child->father = this;
 		}
 
-		inline OidNode * GetFirstChild() const {
-			return this->child;
-		}
+		OidTypeEnum GetTypeEnum() const { return this->type; }
+		OidAccessEnum GetAccessEnum() const { return this->access; }
+		OidStatusEnum GetStatusEnum() const { return this->status; }
 
-		inline OidNode * GetFather() const {
-			return this->father;
-		}
-
-		inline OidNode * GetSibling() const {
-			return this->sibling;
-		}
-
-		inline int GetIndex() const {
-			return this->index;
-		}
-
-		inline const std::string& GetDescription() const {
-			return this->description;
-		}
-
-		inline const std::string& GetName() const {
-			return this->name;
-		}
+		OidNode * GetFirstChild() const { return this->child; }
+		OidNode * GetFather() const { return this->father; }
+		OidNode * GetSibling() const { return this->sibling; }
+		int GetIndex() const { return this->index; }
+		const std::string& GetDescription() const { return this->description; }
+		const std::string& GetName() const { return this->name; }
 
 	};
 

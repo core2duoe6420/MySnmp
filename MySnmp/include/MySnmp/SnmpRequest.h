@@ -31,17 +31,10 @@ namespace mysnmp {
 
 		virtual ~SnmpRequest() {}
 
-		inline const char * GetErrMsg() const {
-			return errMsg;
-		}
+		const char * GetErrMsg() const { return errMsg; }
+		SnmpType GetType() { return type; }
+		int GetRequestId() const { return requestId; }
 
-		inline SnmpType GetType() {
-			return type;
-		}
-
-		inline int GetRequestId() const {
-			return requestId;
-		}
 	};
 
 	class SnmpGetRequest : public SnmpRequest {
@@ -67,9 +60,7 @@ namespace mysnmp {
 		bool AddOid(const char * oidstr);
 		bool AddOid(const OidNode * oid);
 
-		inline SnmpGetRequestConfig& GetConfig() {
-			return config;
-		}
+		SnmpGetRequestConfig& GetConfig() { return config; }
 
 		static void * Run(void * data);
 

@@ -99,24 +99,24 @@ void handler(SnmpResult * result) {
 	}
 }
 
-#include <MySnmp/OidTree.h>
-OidTree oidtree("oid.xml");
-Host  * host;
-RequestManager manager;
-
-int snmp_start() {
-
-	//_CrtSetBreakAlloc(16878);
-
-	Snmp_pp::Snmp::socket_startup();
-	Snmp_pp::IpAddress address("192.168.157.138");
-	manager.SetResultHandler(Host::AddOidValueFromSnmpResult);
-	host = new Host(oidtree, address);
-	for (int i = 0; i < 100; i++) {
-		SnmpGetRequest * request = manager.CreateSnmpGetRequest(*host);
-		request->AddOid("1.3.6.1.2.1.1.1.0");
-		request->AddOid("1.3.6.1.2.1.1.2.0");
-		manager.AddRequestToQueue(request);
-	}
-	return 0;
-}
+//#include <MySnmp/OidTree.h>
+//OidTree oidtree("oid.xml");
+//Host  * host;
+//RequestManager manager;
+//
+//int snmp_start() {
+//
+//	//_CrtSetBreakAlloc(16878);
+//
+//	Snmp_pp::Snmp::socket_startup();
+//	Snmp_pp::IpAddress address("192.168.157.138");
+//	manager.SetResultHandler(Host::AddOidValueFromSnmpResult);
+//	host = new Host(oidtree, address);
+//	for (int i = 0; i < 100; i++) {
+//		SnmpGetRequest * request = manager.CreateSnmpGetRequest(*host);
+//		request->AddOid("1.3.6.1.2.1.1.1.0");
+//		request->AddOid("1.3.6.1.2.1.1.2.0");
+//		manager.AddRequestToQueue(request);
+//	}
+//	return 0;
+//}

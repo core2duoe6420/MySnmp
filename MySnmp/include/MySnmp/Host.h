@@ -29,21 +29,14 @@ namespace mysnmp {
 		VbExtended(const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) :
 			vb(vb), lastSnmpErrStatus(lastSnmpErrStatus), lastPduErrStatus(lastPduErrStatus) {}
 
-		inline Snmp_pp::Vb& GetVb() {
-			return vb;
-		}
-
-		inline int GetLastSnmpErrStatus() const {
-			return lastSnmpErrStatus;
-		}
-
-		inline int GetLastPduErrStatus() const {
-			return lastPduErrStatus;
-		}
+		Snmp_pp::Vb& GetVb() { return vb; }
+		int GetLastSnmpErrStatus() const { return lastSnmpErrStatus; }
+		int GetLastPduErrStatus() const { return lastPduErrStatus; }
 	};
 
 	class Host {
 	private:
+		int hostid;
 		HostConfig config;
 		const OidTree& oidtree;
 		/* 用指针作为哈希表的值有内存泄露的危险
@@ -53,8 +46,9 @@ namespace mysnmp {
 		Snmp_pp::IpAddress address;
 
 	public:
-		Host(OidTree& oidtree, const Snmp_pp::IpAddress& address) :
-			oidtree(oidtree), address(address), oidValues(new RWLock(), [](const std::string& oidStr, VbExtended* & vbe) {
+		Host(int id, OidTree& oidtree, const Snmp_pp::IpAddress& address) :
+			hostid(id), oidtree(oidtree), address(address),
+			oidValues(new RWLock(), [](const std::string& oidStr, VbExtended* & vbe) {
 			/* lambda表达式 */
 			delete vbe;
 		}) {};
@@ -70,32 +64,24 @@ namespace mysnmp {
 		/* @return:同AddOidValue(const Snmp_pp::Vb * vb) */
 		bool AddOidValue(const char * oid, const char * value, int lastSnmpErrStatus, int lastPduErrStatus);
 
-		inline VbExtended * GetOidValue(const char * oid) const {
+		VbExtended * GetOidValue(const char * oid) const {
 			return *this->oidValues.Find(oid);
 		}
 
 		/* @return:找到值并删除返回true，无此值返回false */
-		inline bool RemoveOidValue(const Snmp_pp::Vb& vb) {
+		bool RemoveOidValue(const Snmp_pp::Vb& vb) {
 			const char * oid = vb.get_printable_oid();
 			return RemoveOidValue(oid);
 		}
 
-		inline bool RemoveOidValue(const char * oid) {
+		bool RemoveOidValue(const char * oid) {
 			return this->oidValues.Delete(oid);
 		}
 
-
-		inline const Snmp_pp::IpAddress& GetAddress() const {
-			return address;
-		}
-
-		inline const OidTree& GetOidTree() const {
-			return oidtree;
-		}
-
-		inline HostConfig& GetConfig() {
-			return config;
-		}
+		int GetId() const { return hostid; }
+		const Snmp_pp::IpAddress& GetAddress() const { return address; }
+		const OidTree& GetOidTree() const { return oidtree; }
+		HostConfig& GetConfig() { return config; }
 
 		static void AddOidValueFromSnmpResult(SnmpResult * result);
 	};

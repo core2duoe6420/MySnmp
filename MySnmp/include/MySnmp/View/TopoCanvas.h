@@ -3,8 +3,7 @@
 
 #include <wx/wx.h>
 #include <vector>
-#include <wx/graphics.h>
-#include "wx/dcgraph.h" 
+
 namespace mysnmp {
 	class TopoHost;
 
@@ -12,7 +11,9 @@ namespace mysnmp {
 	public:
 		TopoCanvas(wxWindow * parent, const wxSize& virtualSize, int scrollRate);
 		virtual ~TopoCanvas();
-		void DrawBitmap(const wxBitmap& host, const wxPoint& point);
+		void DrawBitmap(int hostId, const wxBitmap& host, const wxPoint& point,
+			const wxString& ipAddress, const wxString& name);
+		TopoHost * GetHost(const wxString& ipAddress);
 
 	private:
 
@@ -40,82 +41,32 @@ namespace mysnmp {
 		wxBitmap bitmap;
 		wxPoint point;
 		wxString name;
-		
+		wxString ipAddress;
+		int hostId;
 		std::vector<TopoHost *> connectedHost;
+
 	public:
-		TopoHost(const wxBitmap& bitmap, const wxPoint& point,
-			TopoCanvas * canvas, const wxString& name = wxEmptyString) :
-			bitmap(bitmap), point(point), name(name) {
-			/* lblName仅仅用来获得文字大小 */
-			wxStaticBox * lblName = lblName = new wxStaticBox(canvas, wxID_ANY, name);
-			wxSize lblSize = lblName->GetEffectiveMinSize();
-			/* 功成身退 */
-			lblName->Destroy();
-			
-			int lblx, lbly;
-			/* 做一些小修正 */
-			/* Ubuntu下修正量较小 */
-#ifdef _WIN32
-			int x_modvalue = 7;
-#else
-			int x_modvalue = 4;
-#endif
-			lblx = (bitmap.GetSize().GetWidth() - lblSize.GetWidth()) / 2 + x_modvalue;
-			lbly = lblSize.GetHeight() - 5;
-			if (lblx < 0)
-				lblx = 0;
+		TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
+			TopoCanvas * canvas, const wxString& ipAddress, const wxString& name = wxEmptyString);
 
-			wxImage image = bitmap.ConvertToImage();
-			/* Ubuntu下透明bitmap用GCDC仍然无法绘制字
-			* Windows下用GCDC效果差的一塌糊涂
-			* 我完全不知道如何解决这些问题
-			*/
-#ifdef _WIN32
-			image.Resize(bitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly));
-#else
-			image.Resize(bitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly), 255, 255, 255);
-#endif
-			this->bitmap = wxBitmap(image);
+		int GetHostId() const { return hostId; }
+		void SetName(const wxString& name) { this->name = name; }
+		wxString& GetName() { return name; }
+		wxBitmap& GetBitmap() { return bitmap; }
+		wxPoint& GetPoint() { return point; }
+		wxString& GetIpAddress() { return ipAddress; }
+		void SetPoint(const wxPoint& pt) { this->point = pt; }
 
-			wxMemoryDC memDC(this->bitmap);
-			wxGCDC gcdc(memDC);
-			wxFont font(9, wxFONTFAMILY_TELETYPE, wxNORMAL, wxBOLD);
-			gcdc.SetFont(font);
-			gcdc.DrawText(name, lblx, 0);
-			memDC.SelectObject(wxNullBitmap);
-			
-		}
-
-		inline void SetName(const wxString& name) {
-			this->name = name;
-		}
-
-		inline wxString& GetName() {
-			return name;
-		}
-
-		inline wxRect GetRect() const {
+		wxRect GetRect() const {
 			return wxRect(point.x, point.y, bitmap.GetWidth(), bitmap.GetHeight());
 		}
 
-		inline wxBitmap& GetBitmap() {
-			return bitmap;
-		}
-
-		inline wxPoint& GetPoint() {
-			return point;
-		}
-
-		inline void SetPoint(const wxPoint& pt) {
-			this->point = pt;
-		}
-
-		inline bool IsChosen(const wxPoint& pt) {
+		bool IsChosen(const wxPoint& pt) {
 			wxRect rect(this->GetRect());
 			return rect.Contains(pt.x, pt.y);
 		}
 
-		inline bool IsOverlap(const TopoHost& other) {
+		bool IsOverlap(const TopoHost& other) {
 			wxRect thisRect = this->GetRect();
 			wxRect otherRect = other.GetRect();
 			if (thisRect.Contains(otherRect.GetTopLeft()) ||

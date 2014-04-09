@@ -16,7 +16,7 @@ namespace mysnmp {
 			sem_destroy(&this->sem);
 		}
 
-		inline int GetValue() {
+		int GetValue() {
 			int retval;
 			int err;
 			err = sem_getvalue(&this->sem, &retval);
@@ -25,16 +25,16 @@ namespace mysnmp {
 			return retval;
 		}
 
-		inline int Post() {
+		int Post() {
 			return sem_post(&this->sem);
 		}
 
 #ifdef _WIN32
-		inline int Post(int num) {
+		int Post(int num) {
 			return sem_post_multiple(&this->sem, num);
 		}
 #endif
-		inline int Wait() {
+		int Wait() {
 			return sem_wait(&this->sem);
 		}
 	};

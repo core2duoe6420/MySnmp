@@ -23,7 +23,7 @@ namespace mysnmp {
 				delete lock;
 		}
 
-		inline int Get() {
+		int Get() {
 			int retval;
 			if (this->lock)
 				this->lock->Enter(0);
@@ -33,7 +33,7 @@ namespace mysnmp {
 			return retval;
 		}
 
-		inline void Set(int value) {
+		void Set(int value) {
 			if (this->lock)
 				this->lock->Enter(1);
 			this->value = value;
@@ -41,7 +41,7 @@ namespace mysnmp {
 				this->lock->Exit();
 		}
 
-		inline int GetAndInc() {
+		int GetAndInc() {
 			int retval;
 			if (this->lock)
 				this->lock->Enter(0);
@@ -125,7 +125,7 @@ namespace mysnmp {
 				delete lock;
 		}
 
-		inline void SetOnDestroyCallbackToEachItem(OnDeleteCallback callback) {
+		void SetOnDestroyCallbackToEachItem(OnDeleteCallback callback) {
 			this->onDestroyCallbackToEachItem = callback;
 		}
 

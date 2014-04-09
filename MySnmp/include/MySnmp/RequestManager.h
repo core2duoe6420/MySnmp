@@ -44,17 +44,9 @@ namespace mysnmp {
 			delete thread;
 		}
 
-		inline SnmpResult * GetSnmpResult() const {
-			return result;
-		}
-
-		inline Thread * GetThread() const {
-			return thread;
-		}
-
-		inline SnmpRequest * GetSnmpRequest() const {
-			return request;
-		}
+		SnmpResult * GetSnmpResult() const { return result; }
+		Thread * GetThread() const { return thread; }
+		SnmpRequest * GetSnmpRequest() const { return request; }
 	};
 
 	/* 有两个工作线程，两个队列

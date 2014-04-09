@@ -15,6 +15,8 @@ namespace mysnmp {
 
 	class OidTree {
 	private:
+		static OidTree defaultOidTree;
+
 		XMLCh * XMLIndexTagName;
 		XMLCh * XMLNameTagName;
 		XMLCh * XMLDescTagName;
@@ -26,6 +28,9 @@ namespace mysnmp {
 		OidNode * root;
 		void xmlAddChildNodes(OidNode * father, xercesc_3_1::DOMNode * xmlNode);
 	public:
+		static OidTree& GetDefaultOidTree() {
+			return defaultOidTree;
+		}
 		OidTree(const char * xmlpath);
 		virtual ~OidTree();
 		const OidNode * GetOidNode(const Snmp_pp::Oid& oid) const;
