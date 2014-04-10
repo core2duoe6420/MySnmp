@@ -55,12 +55,15 @@ hostId(hostId), bitmap(bitmap), point(point), ipAddress(ipAddress), name(name) {
 }
 
 TopoCanvas::TopoCanvas(wxWindow * parent, const wxSize& virtualSize, int scrollRate) :
-wxScrolledCanvas(parent), scrollRate(scrollRate), dragStatus(0) {
+wxScrolledCanvas(parent), scrollRate(scrollRate), dragStatus(0), chosenTopoHost(NULL) {
 	this->SetVirtualSize(virtualSize);
 	this->SetScrollRate(scrollRate, scrollRate);
+
+	menuPop = new wxMenu();
 }
 
 TopoCanvas::~TopoCanvas() {
+	delete menuPop;
 	wxList::compatibility_iterator node = topoHosts.GetFirst();
 	while (node) {
 		TopoHost * topoHost = (TopoHost*)node->GetData();
@@ -100,7 +103,14 @@ void TopoCanvas::OnPaint(wxPaintEvent& event) {
 #define TEST_DRAG_DRAGGING 2
 
 void TopoCanvas::OnMouseEvents(wxMouseEvent& event) {
-	if (event.LeftDown()) {
+	if (event.RightDown()) {
+		/* ÓÒ¼üµ¯³ö²Ëµ¥ */
+		TopoHost * topoHost = this->findTopoHost(CalcUnscrolledPosition(event.GetPosition()));
+		if (topoHost) {
+			this->chosenTopoHost = topoHost;
+			this->PopupMenu(menuPop, event.GetPosition());
+		}
+	} else if (event.LeftDown()) {
 		TopoHost * topoHost = this->findTopoHost(CalcUnscrolledPosition(event.GetPosition()));
 		if (topoHost) {
 			dragStatus = TEST_DRAG_START;
@@ -185,7 +195,7 @@ void TopoCanvas::OnVirtualEdgeAndExpand(const wxPoint& eventPoint, int threshold
 }
 
 void TopoCanvas::DrawBitmap(int hostId, const wxBitmap& host,
-	const wxPoint& point, const wxString& ipAddress, const wxString& name) {
+							const wxPoint& point, const wxString& ipAddress, const wxString& name) {
 	TopoHost * topoHost = new TopoHost(hostId, host, point, this, ipAddress, name);
 	topoHosts.Append(topoHost);
 	refreshCanvas();

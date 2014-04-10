@@ -8,10 +8,6 @@
 
 using namespace mysnmp;
 
-BEGIN_EVENT_TABLE(DiaAddHost, wxDialog)
-
-END_EVENT_TABLE()
-
 DiaAddHost::DiaAddHost(wxWindow * parent, const wxString& title) :
 wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)) {
 	this->Center();
@@ -26,7 +22,7 @@ wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)) {
 	topSizer->Add(rightSizer, 1, wxALL | wxEXPAND, 20);
 	rightSizer->Add(labelSizer, wxEXPAND);
 	labelSizer->Add(infoSizer, 1, wxALL | wxEXPAND, 5);
-	
+
 	//infoSizer->AddGrowableCol(1, 1);
 
 	/* Labels */
@@ -72,12 +68,12 @@ wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)) {
 	cbTimeout = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25), strsTimeout, wxCB_READONLY);
 	cbVersion = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25), strsVersion, wxCB_READONLY);
 	/* TextBox */
-	txtName = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250,25));
+	txtName = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25));
 	txtReadCommunity = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25));
 	txtWriteCommunity = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25));
 	txtUDPPort = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25));
 	txtIpAddress = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(250, 25));
-	
+
 	infoSizer->Add(lblName);
 	infoSizer->Add(txtName);
 	infoSizer->Add(lblIpAddress);
@@ -95,7 +91,7 @@ wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)) {
 	infoSizer->Add(lblWriteCommunity);
 	infoSizer->Add(txtWriteCommunity);
 
-	
+
 	rightSizer->Add(buttonSizer, 0, wxALIGN_RIGHT | wxRIGHT, 30);
 	wxButton * okButton = new wxButton(this, wxID_OK, L"È·¶¨");
 	okButton->SetDefault();
@@ -114,6 +110,7 @@ bool DiaAddHost::TransferDataToWindow() {
 	txtUDPPort->SetEditable(false);
 	txtReadCommunity->SetValue("public");
 	txtWriteCommunity->SetValue("public");
+	txtIpAddress->SetValue("192.168.157.138");
 	return true;
 }
 

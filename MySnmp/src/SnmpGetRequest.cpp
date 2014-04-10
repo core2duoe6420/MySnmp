@@ -62,7 +62,7 @@ void * SnmpGetRequest::Run(void * data) {
 
 		int status;
 		Snmp snmp(status);
-		
+
 		if (status != SNMP_CLASS_SUCCESS)
 			result->SetErrMsg((char *)snmp.error_msg(status));
 
@@ -79,7 +79,7 @@ void * SnmpGetRequest::Run(void * data) {
 }
 
 void SnmpGetRequest::handleVector(std::vector<Oid>& vector,
-	Snmp& snmp, SnmpTarget& target, Pdu& pdu, SnmpResult * result) {
+								  Snmp& snmp, SnmpTarget& target, Pdu& pdu, SnmpResult * result) {
 	pdu.clear();
 	int len = vector.size();
 	if (len == 0)
@@ -90,7 +90,7 @@ void SnmpGetRequest::handleVector(std::vector<Oid>& vector,
 		vblist[i].set_oid(vector[i]);
 	pdu.set_vblist(vblist, len);
 
-	int snmpErrStatus = 0, pduErrStatus = 0;
+	int snmpErrStatus = 0, pduErrStatus = 0, pduErrIndex = -1;
 
 	if (vector == this->getVector)
 		snmpErrStatus = snmp.get(pdu, target);
@@ -103,18 +103,22 @@ void SnmpGetRequest::handleVector(std::vector<Oid>& vector,
 	}
 	delete[] vblist;
 
-	//SnmpÇëÇó³ö´í
-	if (snmpErrStatus != 0) {
-		result->SetSnmpErrStatus(snmpErrStatus);
-		if (snmpErrStatus == SNMP_CLASS_ERR_STATUS_SET)
-			result->SetPduErrStatus(pdu.get_error_status());
-		//return;
+	if (snmpErrStatus == SNMP_CLASS_ERR_STATUS_SET) {
+		pduErrStatus = pdu.get_error_status();
+		pduErrIndex = pdu.get_error_index();
 	}
 
 	int vbCount = pdu.get_vb_count();
 	Vb * resultVb = new Vb[vbCount];
 	pdu.get_vblist(resultVb, vbCount);
-	result->AddVb(resultVb, vbCount);
+	for (int i = 0; i < vbCount; i++) {
+		result->AddVb(resultVb[i]);
+		result->AddSnmpErrStatus(snmpErrStatus);
+		if (pduErrStatus != 0 && i == pduErrIndex)
+			result->AddPduErrStatus(pduErrStatus);
+		else
+			result->AddPduErrStatus(0);
+	}
 	delete[] resultVb;
 
 }

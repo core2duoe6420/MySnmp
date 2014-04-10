@@ -72,7 +72,11 @@ namespace mysnmp {
 	 */
 	class RequestManager {
 	private:
+		static RequestManager singleton;
 		static SafeInteger nextRequestId;
+
+		RequestManager(SnmpResultHandler resultHandler);
+		RequestManager(const RequestManager& other);
 
 		void clearRequestHolder(int requestId);
 
@@ -96,8 +100,6 @@ namespace mysnmp {
 		static void * resultQueueHandler(void * data);
 
 	public:
-		RequestManager();
-
 		virtual ~RequestManager() {
 			requestQueueHandleThread.Cancel();
 			resultQueueHandleThread.Cancel();
@@ -118,9 +120,11 @@ namespace mysnmp {
 		void AddRequestToQueue(SnmpRequest * request);
 		void AddResultToQueue(RequestHolder * holder);
 
-		inline void SetResultHandler(SnmpResultHandler handler) {
+		void SetResultHandler(SnmpResultHandler handler) {
 			this->resultHandler = handler;
 		}
+
+		static RequestManager& GetManager() { return singleton; }
 	};
 }
 

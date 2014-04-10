@@ -12,11 +12,13 @@ namespace mysnmp {
 		TopoCanvas(wxWindow * parent, const wxSize& virtualSize, int scrollRate);
 		virtual ~TopoCanvas();
 		void DrawBitmap(int hostId, const wxBitmap& host, const wxPoint& point,
-			const wxString& ipAddress, const wxString& name);
+						const wxString& ipAddress, const wxString& name);
 		TopoHost * GetHost(const wxString& ipAddress);
 
-	private:
+		TopoHost * GetChosenHost() { return chosenTopoHost; }
+		wxMenu * GetPopMenu() { return menuPop; }
 
+	private:
 		wxList topoHosts;
 		void refreshCanvas();
 		TopoHost * findTopoHost(const wxPoint& pt);
@@ -29,6 +31,10 @@ namespace mysnmp {
 		void OnSize(wxSizeEvent& event);
 
 		int scrollRate;
+
+		wxMenu * menuPop;
+		TopoHost * chosenTopoHost;
+
 		int dragStatus;
 		TopoHost * draggedTopoHost;
 		wxPoint dragStartLogicalPoint;
@@ -37,6 +43,7 @@ namespace mysnmp {
 	};
 
 	class TopoHost : public wxObject {
+		friend class TopoCanvas;
 	private:
 		wxBitmap bitmap;
 		wxPoint point;
@@ -44,18 +51,6 @@ namespace mysnmp {
 		wxString ipAddress;
 		int hostId;
 		std::vector<TopoHost *> connectedHost;
-
-	public:
-		TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
-			TopoCanvas * canvas, const wxString& ipAddress, const wxString& name = wxEmptyString);
-
-		int GetHostId() const { return hostId; }
-		void SetName(const wxString& name) { this->name = name; }
-		wxString& GetName() { return name; }
-		wxBitmap& GetBitmap() { return bitmap; }
-		wxPoint& GetPoint() { return point; }
-		wxString& GetIpAddress() { return ipAddress; }
-		void SetPoint(const wxPoint& pt) { this->point = pt; }
 
 		wxRect GetRect() const {
 			return wxRect(point.x, point.y, bitmap.GetWidth(), bitmap.GetHeight());
@@ -77,6 +72,19 @@ namespace mysnmp {
 			}
 			return false;
 		}
+
+	public:
+		TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
+				 TopoCanvas * canvas, const wxString& ipAddress, const wxString& name = wxEmptyString);
+
+		int GetHostId() const { return hostId; }
+		void SetName(const wxString& name) { this->name = name; }
+		wxString& GetName() { return name; }
+		wxBitmap& GetBitmap() { return bitmap; }
+		wxPoint& GetPoint() { return point; }
+		wxString& GetIpAddress() { return ipAddress; }
+		void SetPoint(const wxPoint& pt) { this->point = pt; }
+
 	};
 }
 #endif

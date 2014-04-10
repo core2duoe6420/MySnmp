@@ -2,6 +2,8 @@
 #include <MySnmp/SnmpResult.h>
 #include <vector>
 
+#include <MySnmp/debug.h>
+
 using namespace mysnmp;
 
 bool Host::AddOidValue(const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) {
@@ -29,8 +31,10 @@ bool Host::AddOidValue(const char * oid, const char * value, int lastSnmpErrStat
 void Host::AddOidValueFromSnmpResult(SnmpResult * result) {
 	Host& host = result->GetHost();
 	const std::vector<Snmp_pp::Vb>& vblist = result->GetVbList();
+	const std::vector<int>& snmpErrList = result->GetSnmpErrStatus();
+	const std::vector<int>& pduErrList = result->GetPduErrStatus();
 	for (int i = 0; i < vblist.size(); i++)
-		host.AddOidValue(vblist[i], result->GetSnmpErrStatus(), result->GetPduErrStatus());
+		host.AddOidValue(vblist[i], snmpErrList[i], pduErrList[i]);
 }
 
 //void main() {

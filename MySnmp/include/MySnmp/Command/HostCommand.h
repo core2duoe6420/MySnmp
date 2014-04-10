@@ -3,9 +3,6 @@
 
 #include <wx/string.h>
 #include <MySnmp/Command/Command.h>
-#include <MySnmp/HostManager.h>
-#include <MySnmp/OidTree.h>
-
 
 namespace mysnmp {
 
@@ -23,40 +20,13 @@ namespace mysnmp {
 
 	public:
 		AddHostCommand(int type = 0, const wxString& ipAddress = wxEmptyString,
-			int timeout = 300, int retry = 2,
-			const wxString& version = "version2c",
-			const wxString& wrtiecommunity = "public",
-			const wxString& readcommuity = "public",
-			int udpport = 161) :
-			type(type), timeout(timeout), udpport(udpport), retry(retry),
-			ipAddress(ipAddress), readcommunity(readcommuity), writecommunity(writecommunity),
-			version(version) {}
+					   int timeout = 300, int retry = 2,
+					   const wxString& version = "version2c",
+					   const wxString& wrtiecommunity = "public",
+					   const wxString& readcommuity = "public",
+					   int udpport = 161);
 
-		virtual int Execute() {
-			if (this->ipAddress == wxEmptyString)
-				return -1;
-			Snmp_pp::IpAddress ip(ipAddress.mb_str());
-			if (!ip.valid())
-				return -1;
-
-			Host * host = HostManager::GetHostManager().CreateHost(OidTree::GetDefaultOidTree(), ip);
-			this->newHostId = host->GetId();
-			HostConfig& config = host->GetConfig();
-			config.SetTimeout(timeout);
-			config.SetRetryTimes(retry);
-			config.SetUDPPort(udpport);
-			config.SetReadCommunity(readcommunity.mb_str());
-			config.SetWriteCommunity(writecommunity.mb_str());
-			Snmp_pp::snmp_version snmpVersion;
-			if (version == "version1")
-				snmpVersion = Snmp_pp::snmp_version::version1;
-			else if (version == "version2c")
-				snmpVersion = Snmp_pp::snmp_version::version2c;
-			else if (version == "version3")
-				snmpVersion = Snmp_pp::snmp_version::version3;
-			config.SetSnmpVersion(snmpVersion);
-			return newHostId;
-		}
+		virtual int Execute();
 
 		void SetTimeout(int timeout) { this->timeout = timeout; }
 		void SetUdpPort(int udpport) { this->udpport = udpport; }
@@ -66,6 +36,27 @@ namespace mysnmp {
 		void SetSnmpVersion(const wxString& version) { this->version = version; }
 		void SetIpAddress(const wxString& ip) { this->ipAddress = ip; }
 		void SetType(int type) { this->type = type; }
+	};
+
+	enum {
+		GetHostInfo_SUCCESS = 0,
+		GetHostInfo_NOTREACH = 1,
+		GetHostInfo_PDUERR = 2,
+		GetHostInfo_SNMPERR = 3,
+		GetHostInfo_VBERR = 4,
+	};
+
+	class GetHostInfoCommand : public Command {
+	private:
+		int hostid;
+		const char * oidstr;
+		wxString result;
+	public:
+		GetHostInfoCommand(int hostid) : hostid(hostid), oidstr(NULL) {}
+		virtual int Execute();
+
+		wxString GetResult() { return result; }
+		void SetOid(const char * oidstr) { this->oidstr = oidstr; }
 	};
 
 }

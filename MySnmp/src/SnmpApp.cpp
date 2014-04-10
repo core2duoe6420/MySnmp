@@ -1,19 +1,9 @@
 #include <libsnmp.h>
 #include <snmp_pp/snmp_pp.h>
 
-#include <MySnmp/View/FrmMain.h>
-#include <MySnmp/debug.h>
+#include <MySnmp/View/SnmpApp.h>
 
 #include <MySnmp/debug.h>
-
-namespace mysnmp {
-
-	class MySnmpApp : public wxApp {
-	public:
-		virtual bool OnInit();
-	};
-
-};
 
 using namespace mysnmp;
 
@@ -25,7 +15,7 @@ bool MySnmpApp::OnInit() {
 #endif
 	Snmp_pp::Snmp::socket_startup();
 	wxImage::AddHandler(new wxPNGHandler);
-	FrmMain * frmMain = new FrmMain("MySnmp", wxPoint(100, 100), wxSize(700, 500));
+	frmMain = new FrmMain("MySnmp", wxPoint(100, 100), wxSize(700, 500));
 	frmMain->Show(true);
 	return true;
 }

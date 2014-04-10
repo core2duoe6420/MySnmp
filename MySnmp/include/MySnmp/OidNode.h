@@ -36,12 +36,12 @@ namespace mysnmp {
 
 	public:
 		OidNode(int index, const char * name, const char * description,
-			OidTypeEnum type = OidTypeEnum::node,
-			OidAccessEnum access = OidAccessEnum::access_none,
-			OidStatusEnum status = OidStatusEnum::status_none)
-			: index(index), name(name), description(description),
-			type(type), access(access),
-			father(NULL), child(NULL), sibling(NULL) {};
+				OidTypeEnum type = OidTypeEnum::node,
+				OidAccessEnum access = OidAccessEnum::access_none,
+				OidStatusEnum status = OidStatusEnum::status_none)
+				: index(index), name(name), description(description),
+				type(type), access(access),
+				father(NULL), child(NULL), sibling(NULL) {};
 
 		~OidNode();
 

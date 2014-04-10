@@ -14,23 +14,19 @@ namespace mysnmp {
 		HostManager(const HostManager& other) : hosts(NULL) {}
 	public:
 
-		static HostManager& GetHostManager() {
-			return singleton;
+		static Host * GetHost(int hostid) {
+			return *singleton.hosts.Find(hostid);
 		}
 
-		Host * GetHost(int hostid) const {
-			return *this->hosts.Find(hostid);
-		}
-
-		Host * CreateHost(OidTree& oidtree, Snmp_pp::IpAddress ip) {
+		static Host * CreateHost(OidTree& oidtree, Snmp_pp::IpAddress ip) {
 			int nextId = nextHostId.GetAndInc();
 			Host * host = new Host(nextId, oidtree, ip);
-			this->hosts.Insert(nextId, host);
+			singleton.hosts.Insert(nextId, host);
 			return host;
 		}
 
-		void RemoveHost(int hostid) {
-			this->hosts.Delete(hostid, [](const int& key, Host* & value) {
+		static void RemoveHost(int hostid) {
+			singleton.hosts.Delete(hostid, [](const int& key, Host* & value) {
 				delete value;
 			});
 		}

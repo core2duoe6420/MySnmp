@@ -5,21 +5,31 @@
 
 using namespace mysnmp;
 
+RequestManager RequestManager::singleton(Host::AddOidValueFromSnmpResult);
 SafeInteger RequestManager::nextRequestId(new SpinLock(), 0);
 
-RequestManager::RequestManager() :
+RequestManager::RequestManager(SnmpResultHandler resultHandler = NULL) :
 sem_requestWaitQueueEmpty(0), sem_resultWaitQueueEmpty(0), sem_running(10),
 requestQueueHandleThread(RequestManager::requestQueueHandler),
 resultQueueHandleThread(RequestManager::resultQueueHandler),
 requestWaitQueue(new Mutex()),
 resultWaitQueue(new Mutex()),
-requestHolders(new SpinLock()) {
+requestHolders(new SpinLock()),
+resultHandler(resultHandler) {
 
-	this->resultHandler = NULL;
 	requestQueueHandleThread.Run(this);
 	resultQueueHandleThread.Run(this);
 
 }
+
+/* 拷贝构造函数没有用，永远不要用它 */
+RequestManager::RequestManager(const RequestManager& other) :
+sem_requestWaitQueueEmpty(0), sem_resultWaitQueueEmpty(0), sem_running(10),
+requestQueueHandleThread(RequestManager::requestQueueHandler),
+resultQueueHandleThread(RequestManager::resultQueueHandler),
+requestWaitQueue(new Mutex()),
+resultWaitQueue(new Mutex()),
+requestHolders(new SpinLock()) {}
 
 void RequestManager::clearAllReqeustHolders() {
 	requestHolders.DeleteAll([](const int& requestId, RequestHolder *& request) {

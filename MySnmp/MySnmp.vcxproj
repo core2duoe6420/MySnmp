@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClInclude Include="include\MySnmp\Command\Command.h" />
     <ClInclude Include="include\MySnmp\Command\HostCommand.h" />
+    <ClInclude Include="include\MySnmp\Command\SnmpRequestCommand.h" />
     <ClInclude Include="include\MySnmp\Config.h" />
     <ClInclude Include="include\MySnmp\debug.h" />
     <ClInclude Include="include\MySnmp\Host.h" />
@@ -98,11 +99,17 @@
     <ClInclude Include="include\MySnmp\SafeType.h" />
     <ClInclude Include="include\MySnmp\View\DiaAddHost.h" />
     <ClInclude Include="include\MySnmp\View\FrmMain.h" />
+    <ClInclude Include="include\MySnmp\View\HostInfoModule.h" />
+    <ClInclude Include="include\MySnmp\View\SnmpApp.h" />
     <ClInclude Include="include\MySnmp\View\TopoCanvas.h" />
+    <ClInclude Include="include\MySnmp\View\Module.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DiaAddHost.cpp" />
+    <ClCompile Include="src\HostCommand.cpp" />
+    <ClCompile Include="src\HostInfoModule.cpp" />
     <ClCompile Include="src\HostManager.cpp" />
+    <ClCompile Include="src\Module.cpp" />
     <ClCompile Include="src\SnmpApp.cpp" />
     <ClCompile Include="src\FrmMain.cpp" />
     <ClCompile Include="src\Config.cpp" />
@@ -112,6 +119,7 @@
     <ClCompile Include="src\OidTree.cpp" />
     <ClCompile Include="src\RequestManager.cpp" />
     <ClCompile Include="src\SnmpGetRequest.cpp" />
+    <ClCompile Include="src\SnmpRequestCommand.cpp" />
     <ClCompile Include="src\Thread.cpp" />
     <ClCompile Include="src\TopoCanvas.cpp" />
   </ItemGroup>

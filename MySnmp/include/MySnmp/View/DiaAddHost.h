@@ -38,9 +38,6 @@ namespace mysnmp {
 		int GetRetryTimes() const { return intRetry; }
 		int GetUDPPort() const { return intUDPPort; }
 		int GetTimeout() const { return intTimeout; }
-
-
-		DECLARE_EVENT_TABLE();
 	};
 }
 

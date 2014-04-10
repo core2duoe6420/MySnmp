@@ -65,7 +65,10 @@ namespace mysnmp {
 		bool AddOidValue(const char * oid, const char * value, int lastSnmpErrStatus, int lastPduErrStatus);
 
 		VbExtended * GetOidValue(const char * oid) const {
-			return *this->oidValues.Find(oid);
+			VbExtended ** retval = NULL;
+			if ((retval = this->oidValues.Find(oid)) == NULL)
+				return NULL;
+			return *retval;
 		}
 
 		/* @return:找到值并删除返回true，无此值返回false */

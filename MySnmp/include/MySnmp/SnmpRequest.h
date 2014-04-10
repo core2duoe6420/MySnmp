@@ -14,9 +14,12 @@ namespace mysnmp {
 	class SnmpResult;
 	class OidNode;
 
+#ifndef SNMPTYPE
+#define SNMPTYPE
 	enum SnmpType {
 		get, set, trap, infrom
 	};
+#endif
 
 	class SnmpRequest {
 	protected:
@@ -47,8 +50,8 @@ namespace mysnmp {
 		int oidTotalCount;
 
 		void handleVector(std::vector<Snmp_pp::Oid>& vector,
-			Snmp_pp::Snmp& snmp, Snmp_pp::SnmpTarget& target,
-			Snmp_pp::Pdu& pdu, SnmpResult * result);
+						  Snmp_pp::Snmp& snmp, Snmp_pp::SnmpTarget& target,
+						  Snmp_pp::Pdu& pdu, SnmpResult * result);
 
 	public:
 		SnmpGetRequest(int requestId, Host& host, RequestManager * manager) :

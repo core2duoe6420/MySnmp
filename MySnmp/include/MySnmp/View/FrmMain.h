@@ -16,12 +16,7 @@ namespace mysnmp {
 		void OnAddHostClick(wxCommandEvent& event);
 		void OnMenuExitClick(wxCommandEvent& event);
 
-		wxMenuBar * menuBar;
-		wxMenu * menuProgram;
-		wxMenu * menuHost;
 		wxMenuItem * menuAddHost;
-		wxMenu * menuTool;
-		wxMenu * menuHelp;
 		wxMenuItem * menuExit;
 
 		wxToolBar * toolBar;
@@ -33,6 +28,8 @@ namespace mysnmp {
 		void menuInitialize();
 		void canvasInitialize();
 		void eventInitialize();
+		/* 必须在canvasInitialize之后运行 */
+		void modulesInitialize();
 
 		const int ID_menuAddHost;
 		const int ID_menuExit;
