@@ -1,3 +1,5 @@
 /MySnmp/Debug
 /Debug
 *.sdf
+*.sh
+validip.txt

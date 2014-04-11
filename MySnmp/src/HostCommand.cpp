@@ -75,3 +75,16 @@ int GetHostInfoCommand::Execute() {
 	result = vb.get_printable_value();
 	return GetHostInfo_SUCCESS;
 }
+
+int DeleteHostCommand::Execute() {
+	Host * host = HostManager::GetHost(hostid);
+	if (host) {
+		host->SetDelFlag(true);
+		if (host->GetReferenceCount() == 0) {
+			HostManager::RemoveHost(hostid);
+			return 0;
+		}
+		return 1;
+	}
+	return 2;
+}

@@ -4,6 +4,7 @@
 #include <MySnmp/View/TopoCanvas.h>
 #include <MySnmp/View/DiaAddHost.h>
 #include <MySnmp/View/HostInfoModule.h>
+#include <MySnmp/View/DeleteHostModule.h>
 #include <MySnmp/Command/HostCommand.h>
 
 #include <MySnmp/debug.h>
@@ -73,6 +74,8 @@ void FrmMain::modulesInitialize() {
 	ModuleManager::SetTopoCanvas(canvas);
 	HostInfoModule * hostInfoModule = new HostInfoModule(L"显示主机信息");
 	ModuleManager::RegisterModule(hostInfoModule);
+	DeleteHostModule * deleteInfoModule = new DeleteHostModule(L"删除主机");
+	ModuleManager::RegisterModule(deleteInfoModule);
 }
 
 void FrmMain::OnAddHostClick(wxCommandEvent& event) {

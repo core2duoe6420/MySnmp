@@ -59,6 +59,18 @@ namespace mysnmp {
 		void SetOid(const char * oidstr) { this->oidstr = oidstr; }
 	};
 
+	class DeleteHostCommand : public Command {
+	private:
+		int hostid;
+	public:
+		DeleteHostCommand(int hostid) : hostid(hostid) {}
+
+		/* @return：0表示成功删除
+		 *			1表示设置了删除标志但还存在引用没有实际删除
+		 *			2表示没有找到id
+		 */
+		virtual int Execute();
+	};
 }
 
 #endif

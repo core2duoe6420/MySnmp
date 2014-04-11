@@ -37,6 +37,10 @@ namespace mysnmp {
 	class Host {
 	private:
 		int hostid;
+		/* 有多少SnmpRequet和SnmpResult引用该Host */
+		int referenceCount;
+		/* 删除标志 */
+		bool delFlag;
 		HostConfig config;
 		const OidTree& oidtree;
 		/* 用指针作为哈希表的值有内存泄露的危险
@@ -47,7 +51,7 @@ namespace mysnmp {
 
 	public:
 		Host(int id, OidTree& oidtree, const Snmp_pp::IpAddress& address) :
-			hostid(id), oidtree(oidtree), address(address),
+			hostid(id), oidtree(oidtree), address(address), referenceCount(0), delFlag(false),
 			oidValues(new RWLock(), [](const std::string& oidStr, VbExtended* & vbe) {
 			/* lambda表达式 */
 			delete vbe;
@@ -81,6 +85,12 @@ namespace mysnmp {
 			return this->oidValues.Delete(oid);
 		}
 
+		void Refer() { referenceCount++; }
+		void UnRefer() { referenceCount--; }
+
+		bool GetReferenceCount() { return referenceCount; }
+		bool GetDelFlag() { return delFlag; }
+		void SetDelFlag(bool value) { this->delFlag = value; }
 		int GetId() const { return hostid; }
 		const Snmp_pp::IpAddress& GetAddress() const { return address; }
 		const OidTree& GetOidTree() const { return oidtree; }

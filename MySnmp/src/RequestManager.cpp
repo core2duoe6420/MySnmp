@@ -1,7 +1,7 @@
 #include <MySnmp/debug.h>
 
 #include <MySnmp/RequestManager.h>
-
+#include <MySnmp/HostManager.h>
 
 using namespace mysnmp;
 
@@ -63,7 +63,17 @@ void * RequestManager::resultQueueHandler(void * data) {
 
 		manager->sem_running.Post();
 
+		Host& host = holder->GetSnmpResult()->GetHost();
 		manager->clearRequestHolder(holder->result->GetRequestId());
+
+		/* 有两处删除Host对象的地方，这里是一处
+		 * 本程序中Host的DelFlag应该只有Command类能设置
+		 * 而且只有在用户发出删除命令后才能删除
+		 * 因此DelFlag设置后理论上不应该再有SNMP请求
+		 * 对引用计数的访问此时应该没有竞争了
+		 */
+		if (host.GetDelFlag() == true && host.GetReferenceCount() == 0)
+			HostManager::RemoveHost(host.GetId());
 	}
 	return NULL;
 }

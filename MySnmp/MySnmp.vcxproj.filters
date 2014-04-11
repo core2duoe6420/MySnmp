@@ -114,6 +114,9 @@
     <ClInclude Include="include\MySnmp\Command\SnmpRequestCommand.h">
       <Filter>头文件\Command</Filter>
     </ClInclude>
+    <ClInclude Include="include\MySnmp\View\DeleteHostModule.h">
+      <Filter>头文件\View\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Config.cpp">
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="src\SnmpRequestCommand.cpp">
       <Filter>源文件\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DeleteHostModule.cpp">
+      <Filter>源文件\View\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

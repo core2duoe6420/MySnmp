@@ -14,13 +14,16 @@ namespace mysnmp {
 		void DrawBitmap(int hostId, const wxBitmap& host, const wxPoint& point,
 						const wxString& ipAddress, const wxString& name);
 		TopoHost * GetHost(const wxString& ipAddress);
-
+		bool RemoveHost(int hostId);
+		void RefreshCanvas();
 		TopoHost * GetChosenHost() { return chosenTopoHost; }
+		
+		
 		wxMenu * GetPopMenu() { return menuPop; }
-
+		
 	private:
 		wxList topoHosts;
-		void refreshCanvas();
+		
 		TopoHost * findTopoHost(const wxPoint& pt);
 		TopoHost * findOverlappedHost(TopoHost * host);
 		void OnClientEdgeAndScroll(const wxPoint& eventPoint, int threshold);

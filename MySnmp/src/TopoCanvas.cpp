@@ -83,6 +83,25 @@ TopoHost * TopoCanvas::GetHost(const wxString& ipAddress) {
 	return NULL;
 }
 
+bool TopoCanvas::RemoveHost(int hostId) {
+	TopoHost * host;
+	wxList::compatibility_iterator node = topoHosts.GetFirst();
+	while (node) {
+		TopoHost * topoHost = (TopoHost*)node->GetData();
+		if (topoHost->GetHostId() == hostId) {
+			host = topoHost;
+			break;
+		}
+		node = node->GetNext();
+	}
+	if (node) {
+		topoHosts.DeleteNode(node);
+		delete host;
+		return true;
+	}
+	return false;
+}
+
 void TopoCanvas::OnPaint(wxPaintEvent& event) {
 	wxBitmap bitmap(this->GetVirtualSize());
 	wxBufferedPaintDC dc(this, bitmap);
@@ -131,7 +150,7 @@ void TopoCanvas::OnMouseEvents(wxMouseEvent& event) {
 			newPoint.y = draggedTopoHost->GetPoint().y;
 			draggedTopoHost->SetPoint(newPoint);
 		}
-		refreshCanvas();
+		RefreshCanvas();
 	} else if (event.Dragging() && dragStatus != TEST_DRAG_NONE) {
 		if (dragStatus == TEST_DRAG_START) {
 			int tolerance = 2;
@@ -143,14 +162,14 @@ void TopoCanvas::OnMouseEvents(wxMouseEvent& event) {
 
 			dragStatus = TEST_DRAG_DRAGGING;
 			draggedTopoHost->SetPoint(CalcUnscrolledPosition(event.GetPosition()) - dragStartLogicalPoint);
-			refreshCanvas();
+			RefreshCanvas();
 		} else if (dragStatus == TEST_DRAG_DRAGGING) {
 			wxPoint eventLogicalPoint = CalcUnscrolledPosition(event.GetPosition());
 			draggedTopoHost->SetPoint(eventLogicalPoint - dragStartLogicalPoint);
 
 			OnClientEdgeAndScroll(event.GetPosition(), 30);
 			OnVirtualEdgeAndExpand(event.GetPosition(), 30, 100);
-			refreshCanvas();
+			RefreshCanvas();
 		}
 	}
 }
@@ -198,7 +217,7 @@ void TopoCanvas::DrawBitmap(int hostId, const wxBitmap& host,
 							const wxPoint& point, const wxString& ipAddress, const wxString& name) {
 	TopoHost * topoHost = new TopoHost(hostId, host, point, this, ipAddress, name);
 	topoHosts.Append(topoHost);
-	refreshCanvas();
+	RefreshCanvas();
 }
 
 void TopoCanvas::OnSize(wxSizeEvent& event) {
@@ -233,7 +252,7 @@ TopoHost * TopoCanvas::findOverlappedHost(TopoHost * host) {
 	return NULL;
 }
 
-void TopoCanvas::refreshCanvas() {
+void TopoCanvas::RefreshCanvas() {
 	wxClientDC dc(this);
 	wxBufferedDC bufferedDC(&dc, this->GetVirtualSize());
 	bufferedDC.SetBackground(*wxWHITE_BRUSH);

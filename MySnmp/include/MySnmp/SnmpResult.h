@@ -20,9 +20,13 @@ namespace mysnmp {
 
 	public:
 		SnmpResult(SnmpType type, Host& host, int requestId) :
-			type(type), host(host), requestId(requestId), errMsg(NULL) {}
+			type(type), host(host), requestId(requestId), errMsg(NULL) {
+			host.Refer();
+		}
 
-		~SnmpResult() {}
+		~SnmpResult() {
+			host.UnRefer();
+		}
 
 		void SetErrMsg(const char * err) { this->errMsg = err; }
 		const char * GetErrMsg() { return this->errMsg; }

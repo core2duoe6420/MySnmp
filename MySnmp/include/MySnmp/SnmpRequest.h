@@ -30,9 +30,13 @@ namespace mysnmp {
 
 	public:
 		SnmpRequest(int requestId, Host& host, SnmpType type) :
-			requestId(requestId), host(host), type(type), errMsg(NULL) {};
+			requestId(requestId), host(host), type(type), errMsg(NULL) {
+			host.Refer();
+		};
 
-		virtual ~SnmpRequest() {}
+		virtual ~SnmpRequest() {
+			host.UnRefer();
+		}
 
 		const char * GetErrMsg() const { return errMsg; }
 		SnmpType GetType() { return type; }
