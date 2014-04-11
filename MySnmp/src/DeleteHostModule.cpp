@@ -1,4 +1,4 @@
-#include <MySnmp/View/DeleteHostModule.h>
+#include <MySnmp/View/Module.h>
 #include <MySnmp/View/TopoCanvas.h>
 #include <MySnmp/Command/HostCommand.h>
 
@@ -17,4 +17,5 @@ void DeleteHostModule::OnMenuItemClick(wxCommandEvent& event) {
 		DeleteHostCommand command(hostId);
 		command.Execute();
 	}
+	dialog->Destroy();
 }

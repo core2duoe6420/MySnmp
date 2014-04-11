@@ -53,12 +53,14 @@ void * SnmpGetRequest::Run(void * data) {
 		result->SetErrMsg("Oid list is empty");
 
 	if (result->GetErrMsg() == NULL) {
+		request->host.Lock();
 		CTarget target(request->host.GetAddress());
 		target.set_retry(request->host.GetConfig().GetRetryTimes());
 		target.set_timeout(request->host.GetConfig().GetTimeout());
 		target.set_readcommunity(request->host.GetConfig().GetReadCommunity());
 		target.set_writecommunity(request->host.GetConfig().GetWriteCommunity());
 		target.set_version(request->host.GetConfig().GetSnmpVersion());
+		request->host.UnLock();
 
 		int status;
 		Snmp snmp(status);

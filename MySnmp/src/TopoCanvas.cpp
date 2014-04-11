@@ -12,15 +12,12 @@ EVT_PAINT(TopoCanvas::OnPaint)
 EVT_SIZE(TopoCanvas::OnSize)
 END_EVENT_TABLE()
 
-TopoHost::TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
-TopoCanvas * canvas, const wxString& ipAddress, const wxString& name) :
-hostId(hostId), bitmap(bitmap), point(point), ipAddress(ipAddress), name(name) {
+void TopoHost::drawNameOnBitmap() {
 	/* lblName仅仅用来获得文字大小 */
 	wxStaticBox * lblName = lblName = new wxStaticBox(canvas, wxID_ANY, name);
 	wxSize lblSize = lblName->GetEffectiveMinSize();
 	/* 功成身退 */
 	lblName->Destroy();
-
 	int lblx, lbly;
 	/* 做一些小修正 */
 	/* Ubuntu下修正量较小 */
@@ -29,20 +26,20 @@ hostId(hostId), bitmap(bitmap), point(point), ipAddress(ipAddress), name(name) {
 #else
 	int x_modvalue = 4;
 #endif
-	lblx = (bitmap.GetSize().GetWidth() - lblSize.GetWidth()) / 2 + x_modvalue;
+	lblx = (originBitmap.GetSize().GetWidth() - lblSize.GetWidth()) / 2 + x_modvalue;
 	lbly = lblSize.GetHeight() - 5;
 	if (lblx < 0)
 		lblx = 0;
 
-	wxImage image = bitmap.ConvertToImage();
+	wxImage image = originBitmap.ConvertToImage();
 	/* Ubuntu下透明bitmap用GCDC仍然无法绘制字
 	* Windows下用GCDC效果差的一塌糊涂
 	* 我完全不知道如何解决这些问题
 	*/
 #ifdef _WIN32
-	image.Resize(bitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly));
+	image.Resize(originBitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly));
 #else
-	image.Resize(bitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly), 255, 255, 255);
+	image.Resize(originBitmap.GetSize() + wxSize(0, lbly), wxPoint(0, lbly), 255, 255, 255);
 #endif
 	this->bitmap = wxBitmap(image);
 
@@ -52,6 +49,13 @@ hostId(hostId), bitmap(bitmap), point(point), ipAddress(ipAddress), name(name) {
 	gcdc.SetFont(font);
 	gcdc.DrawText(name, lblx, 0);
 	memDC.SelectObject(wxNullBitmap);
+}
+
+TopoHost::TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
+TopoCanvas * canvas, const wxString& ipAddress, const wxString& name) :
+canvas(canvas), hostId(hostId), originBitmap(bitmap), 
+point(point), ipAddress(ipAddress), name(name) {
+	drawNameOnBitmap();
 }
 
 TopoCanvas::TopoCanvas(wxWindow * parent, const wxSize& virtualSize, int scrollRate) :

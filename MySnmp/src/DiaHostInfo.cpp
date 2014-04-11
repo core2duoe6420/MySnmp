@@ -2,14 +2,15 @@
 #include <snmp_pp/snmp_pp.h>
 #include <MySnmp/View/FrmMain.h>
 #include <MySnmp/View/TopoCanvas.h>
-#include <MySnmp/View/DiaAddHost.h>
+#include <MySnmp/View/DiaHostInfo.h>
+#include <MySnmp/Command/HostCommand.h>
 
 #include <MySnmp/debug.h>
 
 using namespace mysnmp;
 
-DiaAddHost::DiaAddHost(wxWindow * parent, const wxString& title) :
-wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)) {
+DiaHostInfo::DiaHostInfo(int type, wxWindow * parent, const wxString& title, const wxString& hostName, int hostid) :
+wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)), type(type), hostName(hostName), hostid(hostid) {
 	this->Center();
 	wxBoxSizer * topSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer * rightSizer = new wxBoxSizer(wxVERTICAL);
@@ -101,20 +102,42 @@ wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(600, 430)) {
 	this->SetSizer(topSizer);
 }
 
-bool DiaAddHost::TransferDataToWindow() {
-	cbRetry->SetSelection(1);
-	cbTimeout->SetSelection(1);
-	cbVersion->SetSelection(1);
-	/* UDP 端口目前不能设置*/
-	txtUDPPort->SetValue("161");
-	txtUDPPort->SetEditable(false);
-	txtReadCommunity->SetValue("public");
-	txtWriteCommunity->SetValue("public");
-	txtIpAddress->SetValue("192.168.157.138");
+bool DiaHostInfo::TransferDataToWindow() {
+	if (type == HOST_ADD) {
+		cbRetry->SetSelection(1);
+		cbTimeout->SetSelection(1);
+		cbVersion->SetSelection(1);
+		/* UDP 端口目前不能设置*/
+		txtUDPPort->SetValue("161");
+		txtUDPPort->SetEditable(false);
+		txtReadCommunity->SetValue("public");
+		txtWriteCommunity->SetValue("public");
+		txtIpAddress->SetValue("192.168.157.138");
+	} else if (type == HOST_MODIFY) {
+		wxString value;
+		HostInfoCommand command(hostid, HostInfoCommand::COMMAND_READ);
+		value.Printf("%d", command.GetUdpPort());
+		txtUDPPort->SetValue(value);
+		txtUDPPort->SetEditable(false);
+		cbRetry->SetSelection(command.GetRetryTimes());
+		cbTimeout->SetSelection(command.GetTimeout() - 1);
+		txtReadCommunity->SetValue(command.GetReadCommunity());
+		txtWriteCommunity->SetValue(command.GetWriteCommunity());
+		originIp = command.GetIpAddress();
+		txtIpAddress->SetValue(command.GetIpAddress());
+		txtName->SetValue(this->hostName);
+		value = command.GetSnmpVersion();
+		if (value == "version1")
+			cbVersion->SetSelection(0);
+		else if (value == "version2c")
+			cbVersion->SetSelection(1);
+		else if (value == "version3")
+			cbVersion->SetSelection(2);
+	}
 	return true;
 }
 
-bool DiaAddHost::TransferDataFromWindow() {
+bool DiaHostInfo::TransferDataFromWindow() {
 	wxString wrongCaption(L"信息有误");
 	wxString ipstr = txtIpAddress->GetValue();
 	Snmp_pp::IpAddress ipaddress(ipstr.mb_str());
@@ -123,8 +146,10 @@ bool DiaAddHost::TransferDataFromWindow() {
 		return false;
 	}
 	if (dynamic_cast<FrmMain*>(this->GetParent())->GetCanvas()->GetHost(ipstr)) {
-		ShowErrorDialog(L"已存在该IP地址的主机", wrongCaption);
-		return false;
+		if (type == HOST_ADD || ipstr != originIp) {
+			ShowErrorDialog(L"已存在该IP地址的主机", wrongCaption);
+			return false;
+		}
 	}
 
 	if (txtReadCommunity->GetValue() == "") {
@@ -152,7 +177,7 @@ bool DiaAddHost::TransferDataFromWindow() {
 	return true;
 }
 
-void DiaAddHost::ShowErrorDialog(const wxString& text, const wxString& caption) {
+void DiaHostInfo::ShowErrorDialog(const wxString& text, const wxString& caption) {
 	wxMessageDialog * errorDialog = new wxMessageDialog(this, text, caption, wxOK | wxICON_ERROR);
 	errorDialog->ShowModal();
 	errorDialog->Destroy();

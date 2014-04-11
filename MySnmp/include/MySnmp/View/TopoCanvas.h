@@ -18,7 +18,6 @@ namespace mysnmp {
 		void RefreshCanvas();
 		TopoHost * GetChosenHost() { return chosenTopoHost; }
 		
-		
 		wxMenu * GetPopMenu() { return menuPop; }
 		
 	private:
@@ -49,11 +48,15 @@ namespace mysnmp {
 		friend class TopoCanvas;
 	private:
 		wxBitmap bitmap;
+		wxBitmap originBitmap;
+		TopoCanvas * canvas;
 		wxPoint point;
 		wxString name;
 		wxString ipAddress;
 		int hostId;
 		std::vector<TopoHost *> connectedHost;
+
+		void drawNameOnBitmap();
 
 		wxRect GetRect() const {
 			return wxRect(point.x, point.y, bitmap.GetWidth(), bitmap.GetHeight());
@@ -81,11 +84,12 @@ namespace mysnmp {
 				 TopoCanvas * canvas, const wxString& ipAddress, const wxString& name = wxEmptyString);
 
 		int GetHostId() const { return hostId; }
-		void SetName(const wxString& name) { this->name = name; }
+		void SetName(const wxString& name) { this->name = name; drawNameOnBitmap(); }
 		wxString& GetName() { return name; }
 		wxBitmap& GetBitmap() { return bitmap; }
 		wxPoint& GetPoint() { return point; }
 		wxString& GetIpAddress() { return ipAddress; }
+		void SetIpAddress(const wxString& ip) { this->ipAddress = ip; }
 		void SetPoint(const wxPoint& pt) { this->point = pt; }
 
 	};

@@ -6,7 +6,7 @@
 
 #include <MySnmp/SafeType.h>
 #include <MySnmp/HostConfig.h>
-
+#include <MySnmp/Lock.h>
 
 namespace mysnmp {
 	class SnmpResult;
@@ -48,6 +48,7 @@ namespace mysnmp {
 		 */
 		SafeHashMap<std::string, VbExtended *> oidValues;
 		Snmp_pp::IpAddress address;
+		SpinLock lock;
 
 	public:
 		Host(int id, OidTree& oidtree, const Snmp_pp::IpAddress& address) :
@@ -88,11 +89,21 @@ namespace mysnmp {
 		void Refer() { referenceCount++; }
 		void UnRefer() { referenceCount--; }
 
+		/* 由于存在对ip和config的多线程读写竞争
+		 * 为防止潜在的问题，在读取和修改ip和config时
+		 * 最好先上锁。在Host内部直接使用锁不是一个好方案
+		 * 因为需要调用者决定是否使用锁，但对Host的修改最少
+		 * 目前来说是方便的解决办法
+		 */
+		void Lock() { lock.Enter(); }
+		void UnLock() { lock.Exit(); }
+
 		bool GetReferenceCount() { return referenceCount; }
 		bool GetDelFlag() { return delFlag; }
 		void SetDelFlag(bool value) { this->delFlag = value; }
 		int GetId() const { return hostid; }
 		const Snmp_pp::IpAddress& GetAddress() const { return address; }
+		void SetAddress(const char * ipstr) { this->address = ipstr; }
 		const OidTree& GetOidTree() const { return oidtree; }
 		HostConfig& GetConfig() { return config; }
 

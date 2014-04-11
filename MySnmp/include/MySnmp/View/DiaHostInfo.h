@@ -4,8 +4,18 @@
 #include <wx/wx.h>
 
 namespace mysnmp {
-	class DiaAddHost : public wxDialog {
+
+	class DiaHostInfo : public wxDialog {
+	public:
+		enum {
+			HOST_ADD = 1,
+			HOST_MODIFY = 2,
+		};
 	private:
+		int type;
+		int hostid;	/* 仅type==HOST_MODIFY时有效 */
+		wxString hostName; /* 仅type==HOST_MODIFY时有效 */
+		wxString originIp; /* 仅type==HOST_MODIFY时有效 */
 		wxTextCtrl * txtName;
 		wxTextCtrl * txtReadCommunity;
 		wxTextCtrl * txtWriteCommunity;
@@ -28,7 +38,8 @@ namespace mysnmp {
 		wxString strVersion;
 
 	public:
-		DiaAddHost(wxWindow * parent, const wxString& title);
+		DiaHostInfo(int type, wxWindow * parent, const wxString& title,
+					const wxString& hostName = wxEmptyString, int hostid = -1);
 
 		wxString GetName() const { return strName; }
 		wxString GetReadCommunity() const { return strReadCommunity; }

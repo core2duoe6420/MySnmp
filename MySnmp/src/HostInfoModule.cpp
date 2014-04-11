@@ -1,4 +1,4 @@
-#include <MySnmp/View/HostInfoModule.h>
+#include <MySnmp/View/Module.h>
 #include <MySnmp/Command/SnmpRequestCommand.h>
 #include <MySnmp/Command/HostCommand.h>
 
@@ -40,11 +40,13 @@ void HostInfoModule::OnMenuItemClick(wxCommandEvent& event) {
 }
 
 FrmHostInfo::FrmHostInfo(HostInfoModule * module) :
-wxFrame(module->GetCanvas()->GetParent(), wxID_ANY, L"主机信息", wxDefaultPosition, wxSize(500, 300),
+wxFrame(module->GetCanvas()->GetParent(), wxID_ANY, "", wxDefaultPosition, wxSize(500, 300),
 wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION),
 module(module) {
 	this->Center();
 	chosenHost = module->GetCanvas()->GetChosenHost();
+	this->SetTitle(chosenHost->GetName() + L" 主机信息");
+	
 	/* 先发送请求说不定在界面布局完成后结果已经抵达 */
 	sendHostInfoRequest();
 	this->SetBackgroundColour(*wxWHITE);
@@ -127,7 +129,7 @@ void FrmHostInfo::sendHostInfoRequest() {
 }
 
 void FrmHostInfo::updateListCtrl() {
-	GetHostInfoCommand command(chosenHost->GetHostId());
+	GetHostOidCommand command(chosenHost->GetHostId());
 	char oidstr[] = "1.3.6.1.2.1.1.1.0";
 	/* 倒数第三个字符用于在system下切换 */
 	int pos = strlen(oidstr) - 3;

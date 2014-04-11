@@ -6,25 +6,7 @@
 
 using namespace mysnmp;
 
-AddHostCommand::AddHostCommand(int type, const wxString& ipAddress,
-							   int timeout, int retry,
-							   const wxString& version,
-							   const wxString& wrtiecommunity,
-							   const wxString& readcommuity,
-							   int udpport) :
-							   type(type), timeout(timeout), udpport(udpport), retry(retry),
-							   ipAddress(ipAddress), readcommunity(readcommuity), writecommunity(writecommunity),
-							   version(version) {}
-
-int AddHostCommand::Execute() {
-	if (this->ipAddress == wxEmptyString)
-		return -1;
-	Snmp_pp::IpAddress ip(ipAddress.mb_str());
-	if (!ip.valid())
-		return -1;
-
-	Host * host = HostManager::CreateHost(OidTree::GetDefaultOidTree(), ip);
-	this->newHostId = host->GetId();
+void HostCommand::SetConfig(Host * host) {
 	HostConfig& config = host->GetConfig();
 	config.SetTimeout(timeout);
 	config.SetRetryTimes(retry);
@@ -39,10 +21,24 @@ int AddHostCommand::Execute() {
 	else if (version == "version3")
 		snmpVersion = Snmp_pp::snmp_version::version3;
 	config.SetSnmpVersion(snmpVersion);
-	return newHostId;
 }
 
-int GetHostInfoCommand::Execute() {
+
+int AddHostCommand::Execute() {
+	if (this->ipAddress == wxEmptyString)
+		return -1;
+	Snmp_pp::IpAddress ip(ipAddress.mb_str());
+	if (!ip.valid())
+		return -1;
+
+	Host * host = HostManager::CreateHost(OidTree::GetDefaultOidTree(), ip);
+	this->hostid = host->GetId();
+	//这里Host刚创建，应该没有同时访问Host的可能，就不上锁了
+	HostCommand::SetConfig(host);
+	return hostid;
+}
+
+int GetHostOidCommand::Execute() {
 	if (!oidstr)
 		return -1;
 	Host * host = HostManager::GetHost(hostid);
@@ -78,13 +74,51 @@ int GetHostInfoCommand::Execute() {
 
 int DeleteHostCommand::Execute() {
 	Host * host = HostManager::GetHost(hostid);
-	if (host) {
-		host->SetDelFlag(true);
-		if (host->GetReferenceCount() == 0) {
-			HostManager::RemoveHost(hostid);
-			return 0;
-		}
-		return 1;
+	if (!host)
+		return -1;
+
+	host->SetDelFlag(true);
+	if (host->GetReferenceCount() == 0) {
+		HostManager::RemoveHost(hostid);
+		return 0;
 	}
-	return 2;
+	return 1;
+}
+
+HostInfoCommand::HostInfoCommand(int hostid, int commandtype) :
+HostCommand(hostid), commandtype(commandtype) {
+	if (commandtype == COMMAND_READ) {
+		Host * host = HostManager::GetHost(hostid);
+		host->Lock();
+		this->ipAddress = host->GetAddress().get_printable();
+		this->retry = host->GetConfig().GetRetryTimes();
+		this->timeout = host->GetConfig().GetTimeout() / 100;
+		this->udpport = host->GetConfig().GetUDPPort();
+		this->readcommunity = host->GetConfig().GetReadCommunity();
+		this->writecommunity = host->GetConfig().GetWriteCommunity();
+		Snmp_pp::snmp_version version = host->GetConfig().GetSnmpVersion();
+		switch (version) {
+		case Snmp_pp::snmp_version::version1:
+			this->version = "version1"; break;
+		case Snmp_pp::snmp_version::version2c:
+			this->version = "version2c"; break;
+		case Snmp_pp::snmp_version::version3:
+			this->version = "version3"; break;
+		}
+		host->UnLock();
+	}
+}
+
+int HostInfoCommand::Execute() {
+	if (this->commandtype == COMMAND_READ)
+		return -2;
+	Host * host = HostManager::GetHost(hostid);
+	if (!host)
+		return -1;
+
+	host->Lock();
+	host->SetAddress(ipAddress.mb_str());
+	HostCommand::SetConfig(host);
+	host->UnLock();
+	return 0;
 }

@@ -2,9 +2,8 @@
 
 #include <MySnmp/View/FrmMain.h>
 #include <MySnmp/View/TopoCanvas.h>
-#include <MySnmp/View/DiaAddHost.h>
-#include <MySnmp/View/HostInfoModule.h>
-#include <MySnmp/View/DeleteHostModule.h>
+#include <MySnmp/View/DiaHostInfo.h>
+#include <MySnmp/View/Module.h>
 #include <MySnmp/Command/HostCommand.h>
 
 #include <MySnmp/debug.h>
@@ -74,27 +73,29 @@ void FrmMain::modulesInitialize() {
 	ModuleManager::SetTopoCanvas(canvas);
 	HostInfoModule * hostInfoModule = new HostInfoModule(L"显示主机信息");
 	ModuleManager::RegisterModule(hostInfoModule);
+	ModifyHostModule * modifyInfoModule = new ModifyHostModule(L"编辑主机");
+	ModuleManager::RegisterModule(modifyInfoModule);
 	DeleteHostModule * deleteInfoModule = new DeleteHostModule(L"删除主机");
 	ModuleManager::RegisterModule(deleteInfoModule);
 }
 
 void FrmMain::OnAddHostClick(wxCommandEvent& event) {
-	DiaAddHost * diaAddHost = new DiaAddHost(this, L"添加新主机");
-	if (diaAddHost->ShowModal() == wxID_OK) {
+	DiaHostInfo * diaHostInfo = new DiaHostInfo(DiaHostInfo::HOST_ADD, this, L"添加新主机");
+	if (diaHostInfo->ShowModal() == wxID_OK) {
 		AddHostCommand command;
-		command.SetRetryTimes(diaAddHost->GetRetryTimes());
-		command.SetTimeout(diaAddHost->GetTimeout());
-		command.SetIpAddress(diaAddHost->GetIpAddress());
-		command.SetReadCommunity(diaAddHost->GetReadCommunity());
-		command.SetWriteCommunity(diaAddHost->GetWriteCommunity());
-		command.SetUdpPort(diaAddHost->GetUDPPort());
-		command.SetSnmpVersion(diaAddHost->GetVersion());
+		command.SetRetryTimes(diaHostInfo->GetRetryTimes());
+		command.SetTimeout(diaHostInfo->GetTimeout());
+		command.SetIpAddress(diaHostInfo->GetIpAddress());
+		command.SetReadCommunity(diaHostInfo->GetReadCommunity());
+		command.SetWriteCommunity(diaHostInfo->GetWriteCommunity());
+		command.SetUdpPort(diaHostInfo->GetUDPPort());
+		command.SetSnmpVersion(diaHostInfo->GetVersion());
 		int hostId = command.Execute();
 		this->canvas->DrawBitmap(hostId, wxBitmap("image/Host.png", wxBITMAP_TYPE_PNG),
-								 wxPoint(50, 50), diaAddHost->GetIpAddress(), diaAddHost->GetName());
+								 wxPoint(50, 50), diaHostInfo->GetIpAddress(), diaHostInfo->GetName());
 	}
 
-	diaAddHost->Destroy();
+	diaHostInfo->Destroy();
 
 }
 

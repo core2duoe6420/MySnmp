@@ -59,6 +59,33 @@ namespace mysnmp {
 		}
 
 	};
+
+	class HostInfoModule : public Module {
+	private:
+	public:
+		HostInfoModule(const wxString& menuLabel) :
+			Module(menuLabel) {}
+
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
+	class ModifyHostModule : public Module {
+	private:
+	public:
+		ModifyHostModule(const wxString& menuLabel) :
+			Module(menuLabel) {}
+
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
+	class DeleteHostModule : public Module {
+	private:
+	public:
+		DeleteHostModule(const wxString& menuLabel) :
+			Module(menuLabel) {}
+
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
 }
 
 #endif

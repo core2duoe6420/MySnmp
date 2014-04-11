@@ -99,23 +99,17 @@
     <ClInclude Include="include\MySnmp\Command\Command.h">
       <Filter>头文件\Command</Filter>
     </ClInclude>
-    <ClInclude Include="include\MySnmp\View\DiaAddHost.h">
-      <Filter>头文件\View</Filter>
-    </ClInclude>
     <ClInclude Include="include\MySnmp\View\SnmpApp.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
     <ClInclude Include="include\MySnmp\View\Module.h">
       <Filter>头文件\View\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="include\MySnmp\View\HostInfoModule.h">
-      <Filter>头文件\View\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="include\MySnmp\Command\SnmpRequestCommand.h">
       <Filter>头文件\Command</Filter>
     </ClInclude>
-    <ClInclude Include="include\MySnmp\View\DeleteHostModule.h">
-      <Filter>头文件\View\Modules</Filter>
+    <ClInclude Include="include\MySnmp\View\DiaHostInfo.h">
+      <Filter>头文件\View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +149,6 @@
     <ClCompile Include="src\HostManager.cpp">
       <Filter>源文件\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\DiaAddHost.cpp">
-      <Filter>源文件\View</Filter>
-    </ClCompile>
     <ClCompile Include="src\Module.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
@@ -171,6 +162,12 @@
       <Filter>源文件\Command</Filter>
     </ClCompile>
     <ClCompile Include="src\DeleteHostModule.cpp">
+      <Filter>源文件\View\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DiaHostInfo.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModifyHostModule.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
   </ItemGroup>

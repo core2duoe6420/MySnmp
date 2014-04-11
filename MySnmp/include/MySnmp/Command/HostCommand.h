@@ -5,9 +5,10 @@
 #include <MySnmp/Command/Command.h>
 
 namespace mysnmp {
+	class Host;
 
-	class AddHostCommand : public Command {
-	private:
+	class HostCommand : public Command {
+	protected:
 		int timeout;
 		int udpport;
 		wxString readcommunity;
@@ -16,18 +17,13 @@ namespace mysnmp {
 		wxString version;
 		wxString ipAddress;
 		int type;
-		int newHostId;
+		int hostid;
 
+		void SetConfig(Host * host);
+
+		HostCommand(int hostid) : hostid(hostid) {}
+		HostCommand() {}
 	public:
-		AddHostCommand(int type = 0, const wxString& ipAddress = wxEmptyString,
-					   int timeout = 300, int retry = 2,
-					   const wxString& version = "version2c",
-					   const wxString& wrtiecommunity = "public",
-					   const wxString& readcommuity = "public",
-					   int udpport = 161);
-
-		virtual int Execute();
-
 		void SetTimeout(int timeout) { this->timeout = timeout; }
 		void SetUdpPort(int udpport) { this->udpport = udpport; }
 		void SetReadCommunity(const wxString& readcommunity) { this->readcommunity = readcommunity; }
@@ -36,6 +32,20 @@ namespace mysnmp {
 		void SetSnmpVersion(const wxString& version) { this->version = version; }
 		void SetIpAddress(const wxString& ip) { this->ipAddress = ip; }
 		void SetType(int type) { this->type = type; }
+		int GetTimeout() { return this->timeout; }
+		int GetUdpPort() { return this->udpport; }
+		wxString GetReadCommunity() { return this->readcommunity; }
+		wxString GetWriteCommunity() { return this->writecommunity; }
+		int GetRetryTimes() { return this->retry; }
+		wxString GetSnmpVersion() { return this->version; }
+		wxString GetIpAddress() { return this->ipAddress; }
+	};
+
+	class AddHostCommand : public HostCommand {
+	public:
+		AddHostCommand() {}
+
+		virtual int Execute();
 	};
 
 	enum {
@@ -46,17 +56,32 @@ namespace mysnmp {
 		GetHostInfo_VBERR = 4,
 	};
 
-	class GetHostInfoCommand : public Command {
+	class GetHostOidCommand : public Command {
 	private:
 		int hostid;
 		const char * oidstr;
 		wxString result;
 	public:
-		GetHostInfoCommand(int hostid) : hostid(hostid), oidstr(NULL) {}
+		GetHostOidCommand(int hostid) : hostid(hostid), oidstr(NULL) {}
 		virtual int Execute();
 
 		wxString GetResult() { return result; }
 		void SetOid(const char * oidstr) { this->oidstr = oidstr; }
+	};
+
+	class HostInfoCommand : public HostCommand {
+	public:
+		enum {
+			COMMAND_READ = 1,
+			COMMAND_WRITE = 2,
+		};
+	private:
+		int commandtype;
+
+	public:
+		HostInfoCommand(int hostid, int commandtype);
+
+		virtual int Execute();
 	};
 
 	class DeleteHostCommand : public Command {
@@ -67,7 +92,7 @@ namespace mysnmp {
 
 		/* @return：0表示成功删除
 		 *			1表示设置了删除标志但还存在引用没有实际删除
-		 *			2表示没有找到id
+		 *			-1表示没有找到id
 		 */
 		virtual int Execute();
 	};
