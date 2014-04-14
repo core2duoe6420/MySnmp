@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+	<column name="序号" size="40"></column>
+	<column name="描述" size="60"></column>
+	<column name="类型" size="120">
+		<map key="1" value="other" />          
+		<map key="2" value="regular1822" />
+		<map key="3" value="hdh1822" />
+		<map key="4" value="ddn-x25" />
+		<map key="5" value="rfc877-x25" />
+		<map key="6" value="ethernet-csmacd" />
+		<map key="7" value="iso88023-csmacd" />
+		<map key="8" value="iso88024-tokenBus" />
+		<map key="9" value="iso88025-tokenRing" />
+		<map key="10" value="iso88026-man" />
+		<map key="11" value="starLan" />
+		<map key="12" value="proteon-10Mbit" />
+		<map key="13" value="proteon-80Mbit" />
+		<map key="14" value="hyperchannel" />
+		<map key="15" value="fddi" />
+		<map key="16" value="lapb" />
+		<map key="17" value="sdlc" />
+		<map key="18" value="ds1" />           
+		<map key="19" value="e1" />            
+		<map key="20" value="basicISDN" />
+		<map key="21" value="primaryISDN" />   
+		<map key="22" value="propPointToPointSerial" />
+		<map key="23" value="ppp" />
+		<map key="24" value="softwareLoopback" />
+		<map key="25" value="eon" />            
+		<map key="26" value="ethernet-3Mbit" />
+		<map key="27" value="nsip" />           
+		<map key="28" value="slip" />           
+		<map key="29" value="ultra" />          
+		<map key="30" value="ds3" />            
+		<map key="31" value="sip" />            
+		<map key="32" value="frame-relay" />
+	</column>
+	<column name="MTU" size="60"></column>
+	<column name="速率" size="80"></column>
+	<column name="物理地址" size="130"></column>
+	<column name="管理状态" size="60">
+		<map key="1" value="启动" />
+		<map key="2" value="关闭" />
+		<map key="3" value="测试中" />
+	</column>
+	<column name="运行状态" size="60">
+		<map key="1" value="启动" />
+		<map key="2" value="关闭" />
+		<map key="3" value="测试中" />
+	</column>
+	<column name="上次改变时间" size="100"></column>
+	<column name="接收字节" size="100"></column>
+	<column name="向上传递的单播数据包" size="100"></column>
+	<column name="向上传递的多播数据包" size="100"></column>
+	<column name="丢弃的接收包" size="100"></column>
+	<column name="接收错误数" size="100"></column>
+	<column name="未知协议的丢包数" size="100"></column>
+	<column name="发送字节" size="100"></column>
+	<column name="向下传递的单播数据包" size="100"></column>
+	<column name="向下传递的多播数据包" size="100"></column>
+	<column name="丢弃的发送包" size="100"></column>
+	<column name="发送错误数" size="100"></column>
+	<column name="发送排队数" size="100"></column>
+	<column name="定义OID" size="100"></column>
+</interface>

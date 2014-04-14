@@ -24,6 +24,8 @@ namespace mysnmp {
 	public:
 		SnmpRequestCommand(SnmpType type, int hostId);
 
+		void SetBulkNonRepeater(int value);
+		void SetBulkMaxRepeater(int value);
 		void AddOid(const char * oidstr);
 
 		virtual int Execute();

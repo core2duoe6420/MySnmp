@@ -1,10 +1,49 @@
 #ifndef __MODULE_H
 #define __MODULE_H
 
+#include <vector>
+#include <unordered_map>
+
 #include <wx/wx.h>
+
 #include <MySnmp/View/TopoCanvas.h>
 
 namespace mysnmp {
+
+	class ColumnInfo {
+		friend class XMLColumnCollection;
+	private:
+		std::unordered_map<int, wxString> valueMap;
+		wxString columnName;
+		int columnSize;
+		bool hasValueMap;
+
+	public:
+		ColumnInfo(const wxString& name, int size) :
+			columnName(name), columnSize(size), hasValueMap(false) {}
+		
+		wxString MapValueToString(int value) const {
+			std::unordered_map<int, wxString>::const_iterator iter = valueMap.find(value);
+			if (iter == valueMap.end())
+				return wxEmptyString;
+			return iter->second;
+		}
+
+		bool HasValueMap() const { return hasValueMap; }
+		wxString GetName() const { return columnName; }
+		int GetSize() const { return columnSize; }
+	};
+
+	class XMLColumnCollection {
+	private:
+		std::vector<ColumnInfo *> columns;
+	public:
+		XMLColumnCollection(const char * xmlpath, int& ret);
+		~XMLColumnCollection();
+		int GetColumnCount() const { return columns.size(); }
+		const ColumnInfo * GetColumn(int index) const { return columns[index]; }
+	};
+
 	class Module : public wxObject {
 	private:
 		/* 显示在TopoCanvas弹出菜单中的项
@@ -85,6 +124,16 @@ namespace mysnmp {
 			Module(menuLabel) {}
 
 		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
+	class InterfaceModule : public Module {
+	private:
+		XMLColumnCollection * columnInfos;
+	public:
+		InterfaceModule(const wxString& menuLabel);
+		~InterfaceModule();
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+		XMLColumnCollection * GetColumnCollection() const { return columnInfos; }
 	};
 }
 

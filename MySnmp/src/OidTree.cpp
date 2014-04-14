@@ -12,7 +12,7 @@ using namespace mysnmp;
 using namespace xercesc;
 
 
-OidTree OidTree::defaultOidTree("oid.xml");
+OidTree OidTree::defaultOidTree("xml/oid.xml");
 
 OidTree::OidTree(const char * xmlpath) {
 	XMLPlatformUtils::Initialize();

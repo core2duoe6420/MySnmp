@@ -18,27 +18,27 @@ namespace mysnmp {
 
 		virtual ~SnmpGetRequestConfig() {}
 
-		inline void SetBulkNonRepeater(int nonRepeater) {
+		void SetBulkNonRepeater(int nonRepeater) {
 			Config::setConfigItemValue(BULK_NON_REPEATER, nonRepeater);
 		}
 
-		inline int GetBulkNonRepeater() const {
+		int GetBulkNonRepeater() const {
 			return Config::GetIntConfigItem(BULK_NON_REPEATER);
 		}
 
-		inline void SetBulkMaxRepeater(int maxRepeater) {
+		void SetBulkMaxRepeater(int maxRepeater) {
 			Config::setConfigItemValue(BULK_MAX_REPEATER, maxRepeater);
 		}
 
-		inline int GetBulkMaxRepeater() const {
+		int GetBulkMaxRepeater() const {
 			return Config::GetIntConfigItem(BULK_MAX_REPEATER);
 		}
 
-		inline void SetMaxVbCount(int maxVbCount) {
+		void SetMaxVbCount(int maxVbCount) {
 			Config::setConfigItemValue(BULK_MAX_REPEATER, maxVbCount);
 		}
 
-		inline int GetMaxVbCount() const {
+		int GetMaxVbCount() const {
 			return Config::GetIntConfigItem(MAX_VB_COUNT);
 		}
 	};

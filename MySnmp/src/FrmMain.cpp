@@ -73,6 +73,8 @@ void FrmMain::modulesInitialize() {
 	ModuleManager::SetTopoCanvas(canvas);
 	HostInfoModule * hostInfoModule = new HostInfoModule(L"显示主机信息");
 	ModuleManager::RegisterModule(hostInfoModule);
+	InterfaceModule * interfaceModule = new InterfaceModule(L"接口信息");
+	ModuleManager::RegisterModule(interfaceModule);
 	ModifyHostModule * modifyInfoModule = new ModifyHostModule(L"编辑主机");
 	ModuleManager::RegisterModule(modifyInfoModule);
 	DeleteHostModule * deleteInfoModule = new DeleteHostModule(L"删除主机");

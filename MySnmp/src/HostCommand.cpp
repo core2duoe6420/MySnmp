@@ -40,8 +40,12 @@ int AddHostCommand::Execute() {
 
 int GetHostOidCommand::Execute() {
 	if (!oidstr)
-		return -1;
+		return GetHostInfo_NOOID;
 	Host * host = HostManager::GetHost(hostid);
+	if (!host) {
+		result = L"无此主机";
+		return GetHostInfo_NOHOST;
+	}
 	VbExtended * vbe = host->GetOidValue(oidstr);
 	if (!vbe) {
 		result = L"请求结果未抵达";

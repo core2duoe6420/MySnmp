@@ -31,9 +31,6 @@
     <Filter Include="头文件\Command">
       <UniqueIdentifier>{d727c69e-80c0-4f00-8ce2-463738bcab0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\View\Modules">
-      <UniqueIdentifier>{110e1706-3ae5-4948-87ac-c652a02967b7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\View\Modules">
       <UniqueIdentifier>{5ba48284-b988-4f24-8524-be8c3278dd26}</UniqueIdentifier>
     </Filter>
@@ -102,13 +99,13 @@
     <ClInclude Include="include\MySnmp\View\SnmpApp.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
-    <ClInclude Include="include\MySnmp\View\Module.h">
-      <Filter>头文件\View\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="include\MySnmp\Command\SnmpRequestCommand.h">
       <Filter>头文件\Command</Filter>
     </ClInclude>
     <ClInclude Include="include\MySnmp\View\DiaHostInfo.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MySnmp\View\Module.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
   </ItemGroup>
@@ -168,6 +165,9 @@
       <Filter>源文件\View</Filter>
     </ClCompile>
     <ClCompile Include="src\ModifyHostModule.cpp">
+      <Filter>源文件\View\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InterfaceModule.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
   </ItemGroup>

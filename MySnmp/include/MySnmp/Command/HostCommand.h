@@ -50,10 +50,12 @@ namespace mysnmp {
 
 	enum {
 		GetHostInfo_SUCCESS = 0,
-		GetHostInfo_NOTREACH = 1,
-		GetHostInfo_PDUERR = 2,
-		GetHostInfo_SNMPERR = 3,
-		GetHostInfo_VBERR = 4,
+		GetHostInfo_NOTREACH = -1,
+		GetHostInfo_PDUERR = -2,
+		GetHostInfo_SNMPERR = -3,
+		GetHostInfo_VBERR = -4,
+		GetHostInfo_NOHOST = -5,
+		GetHostInfo_NOOID = -6,
 	};
 
 	class GetHostOidCommand : public Command {
