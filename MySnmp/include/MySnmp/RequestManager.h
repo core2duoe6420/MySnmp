@@ -23,10 +23,15 @@ namespace mysnmp {
 			switch (type) {
 			case SnmpType::get:
 				request = new SnmpGetRequest(requestId, host, manager);
+				thread = new Thread(SnmpGetRequest::Run);
+				break;
+			case SnmpType::set:
+				request = new SnmpSetRequest(requestId, host, manager);
+				thread = new Thread(SnmpSetRequest::Run);
 				break;
 			}
 			result = new SnmpResult(type, host, requestId);
-			thread = new Thread(SnmpGetRequest::Run);
+
 		}
 
 		RequestHolder(const RequestHolder& requestHolder) {
@@ -116,6 +121,7 @@ namespace mysnmp {
 		}
 
 		SnmpGetRequest * CreateSnmpGetRequest(Host& host);
+		SnmpSetRequest * CreateSnmpSetRequest(Host& host);
 
 		void AddRequestToQueue(SnmpRequest * request);
 		void AddResultToQueue(RequestHolder * holder);

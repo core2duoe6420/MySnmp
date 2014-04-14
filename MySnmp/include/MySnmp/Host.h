@@ -24,14 +24,18 @@ namespace mysnmp {
 		Snmp_pp::Vb vb;
 		int lastSnmpErrStatus;
 		int lastPduErrStatus;
-
+		/* 目前没有使用该变量 */
+		int lastSetErrStatus;
 	public:
-		VbExtended(const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) :
-			vb(vb), lastSnmpErrStatus(lastSnmpErrStatus), lastPduErrStatus(lastPduErrStatus) {}
+		VbExtended(const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0,
+				   int lastPduErrStatus = 0, int lastSetErrStatus = 0) :
+				   vb(vb), lastSnmpErrStatus(lastSnmpErrStatus), lastPduErrStatus(lastPduErrStatus),
+				   lastSetErrStatus(lastSetErrStatus) {}
 
 		Snmp_pp::Vb& GetVb() { return vb; }
 		int GetLastSnmpErrStatus() const { return lastSnmpErrStatus; }
 		int GetLastPduErrStatus() const { return lastPduErrStatus; }
+		int GetLastSetErrStatus() const { return lastSetErrStatus; }
 	};
 
 	class Host {

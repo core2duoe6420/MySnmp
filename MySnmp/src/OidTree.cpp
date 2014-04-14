@@ -65,20 +65,31 @@ void OidTree::xmlAddChildNodes(OidNode * father, xercesc::DOMNode * xmlNode) {
 		xercesc::DOMNode * typeNode = attrs->getNamedItem(XMLTypeTagName);
 		char * typeStr = XMLString::transcode(typeNode->getNodeValue());
 		OidTypeEnum typeEnum = OidNode::GetTypeEnum(typeStr);
-		if (typeEnum != OidTypeEnum::node && typeEnum != OidTypeEnum::value) {
+
+		OidSyntaxEnum syntaxEnum = OidSyntaxEnum::SYNTAX_NONE;
+		if (typeEnum == OidTypeEnum::TYPE_VALUE || typeEnum == OidTypeEnum::TYPE_COLUMN) {
+			xercesc::DOMNode * syntaxNode = attrs->getNamedItem(XMLSyntaxTagName);
+			char * syntaxStr = XMLString::transcode(syntaxNode->getNodeValue());
+			syntaxEnum = OidNode::GetSyntaxEnum(syntaxStr);
+			XMLString::release(&syntaxStr);
+		}
+		if (typeEnum != OidTypeEnum::TYPE_NODE && typeEnum != OidTypeEnum::TYPE_VALUE) {
 			xercesc::DOMNode * accessNode = attrs->getNamedItem(XMLAccessTagName);
 			char * accessStr = XMLString::transcode(accessNode->getNodeValue());
 			OidAccessEnum accessEnum = OidNode::GetAccessEnum(accessStr);
 			xercesc::DOMNode * statusNode = attrs->getNamedItem(XMLAccessTagName);
 			char * statusStr = XMLString::transcode(statusNode->getNodeValue());
 			OidStatusEnum statusEnum = OidNode::GetStatusEnum(statusStr);
-			newNode = new OidNode(index, name, desc, typeEnum, accessEnum, statusEnum);
+
+			newNode = new OidNode(index, name, desc, typeEnum, syntaxEnum, accessEnum, statusEnum);
 			XMLString::release(&accessStr);
 			XMLString::release(&statusStr);
-		} else if (typeEnum == OidTypeEnum::value)
-			newNode = new OidNode(index, name, desc, typeEnum);
-		else
+
+		} else if (typeEnum == OidTypeEnum::TYPE_VALUE) {
+			newNode = new OidNode(index, name, desc, typeEnum, syntaxEnum);
+		} else {
 			newNode = new OidNode(index, name, desc);
+		}
 
 		XMLString::release(&typeStr);
 		XMLString::release(&indexStr);
@@ -98,7 +109,7 @@ const OidNode * OidTree::GetOidNode(const Snmp_pp::Oid& oid) const {
 	OidNode * node = this->root;
 	for (int i = 0; i < oid.len(); i++) {
 		int index = oid[i];
-		if (node->GetTypeEnum() == OidTypeEnum::column)
+		if (node->GetType() == OidTypeEnum::TYPE_COLUMN)
 			return node;
 		node = node->GetChildWithIndex(index);
 		if (node == NULL)

@@ -23,39 +23,59 @@ OidNode::~OidNode() {
 
 OidTypeEnum OidNode::GetTypeEnum(const char * typeStr) {
 	if (strcmp(typeStr, "node") == 0)
-		return OidTypeEnum::node;
+		return OidTypeEnum::TYPE_NODE;
 	if (strcmp(typeStr, "scalar") == 0)
-		return OidTypeEnum::scalar;
+		return OidTypeEnum::TYPE_SCALAR;
 	if (strcmp(typeStr, "table") == 0)
-		return OidTypeEnum::table;
+		return OidTypeEnum::TYPE_TABLE;
 	if (strcmp(typeStr, "entry") == 0)
-		return OidTypeEnum::entry;
+		return OidTypeEnum::TYPE_ENTRY;
 	if (strcmp(typeStr, "column") == 0)
-		return OidTypeEnum::column;
+		return OidTypeEnum::TYPE_COLUMN;
 	if (strcmp(typeStr, "value") == 0)
-		return OidTypeEnum::value;
+		return OidTypeEnum::TYPE_VALUE;
 }
 
 OidAccessEnum OidNode::GetAccessEnum(const char * accessStr) {
 	if (strcmp(accessStr, "read_only") == 0)
-		return OidAccessEnum::read_only;
+		return OidAccessEnum::ACCESS_READ_ONLY;
 	if (strcmp(accessStr, "write_only") == 0)
-		return OidAccessEnum::write_only;
+		return OidAccessEnum::ACCESS_WRITE_ONLY;
 	if (strcmp(accessStr, "read_write") == 0)
-		return OidAccessEnum::read_write;
+		return OidAccessEnum::ACCESS_READ_WRITE;
 	if (strcmp(accessStr, "not_accessible") == 0)
-		return OidAccessEnum::not_accessible;
-	return OidAccessEnum::access_none;
+		return OidAccessEnum::ACCESS_NOT_ACCESSIBLE;
+	return OidAccessEnum::ACCESS_NONE;
 }
 
 OidStatusEnum OidNode::GetStatusEnum(const char * statusStr) {
 	if (strcmp(statusStr, "mandatory") == 0)
-		return OidStatusEnum::mandatory;
+		return OidStatusEnum::STATUS_MANDATORY;
 	if (strcmp(statusStr, "optional") == 0)
-		return OidStatusEnum::optional;
+		return OidStatusEnum::STATUS_OPTIONAL;
 	if (strcmp(statusStr, "obsolete") == 0)
-		return OidStatusEnum::obsolete;
-	return OidStatusEnum::status_none;
+		return OidStatusEnum::STATUS_OBSOLETE;
+	return OidStatusEnum::STATUS_NONE;
+}
+
+OidSyntaxEnum OidNode::GetSyntaxEnum(const char * syntaxStr) {
+	if (strcmp(syntaxStr, "integer") == 0)
+		return OidSyntaxEnum::SYNTAX_INTEGER;
+	if (strcmp(syntaxStr, "oid") == 0)
+		return OidSyntaxEnum::SYNTAX_OID;
+	if (strcmp(syntaxStr, "string") == 0)
+		return OidSyntaxEnum::SYNTAX_STRING;
+	if (strcmp(syntaxStr, "counter") == 0)
+		return OidSyntaxEnum::SYNTAX_COUNTER;
+	if (strcmp(syntaxStr, "gauge") == 0)
+		return OidSyntaxEnum::SYNTAX_GAUGE;
+	if (strcmp(syntaxStr, "timeticks") == 0)
+		return OidSyntaxEnum::SYNTAX_TIMETICKS;
+	if (strcmp(syntaxStr, "sequence") == 0)
+		return OidSyntaxEnum::SYNTAX_SEQUENCE;
+	if (strcmp(syntaxStr, "entry") == 0)
+		return OidSyntaxEnum::SYNTAX_ENTRY;
+	return OidSyntaxEnum::SYNTAX_NONE;
 }
 
 Snmp_pp::Oid OidNode::ToOid() const {

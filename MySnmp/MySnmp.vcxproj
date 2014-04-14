@@ -122,6 +122,7 @@
     <ClCompile Include="src\RequestManager.cpp" />
     <ClCompile Include="src\SnmpGetRequest.cpp" />
     <ClCompile Include="src\SnmpRequestCommand.cpp" />
+    <ClCompile Include="src\SnmpSetRequest.cpp" />
     <ClCompile Include="src\Thread.cpp" />
     <ClCompile Include="src\TopoCanvas.cpp" />
   </ItemGroup>

@@ -8,31 +8,31 @@
 					<node index="2" name="mgmt" desc="" type="node">
 						<node index="1" name="mib-2" desc="" type="node">
 							<node index="1" name="system" desc="" type="node">
-								<node index="1" name="sysDescr" desc="" type="scalar" access="read_only" status="mandatory" syntax="string">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="1" name="sysDescr" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="string" />
 								</node>
-								<node index="2" name="sysObjectID" desc="" type="scalar" access="read_only" status="mandatory" syntax="oid">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="2" name="sysObjectID" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="oid" />
 								</node>
-								<node index="3" name="sysUpTime" desc="" type="scalar" access="read_only" status="mandatory" syntax="timeticks">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="3" name="sysUpTime" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="timeticks" />
 								</node>
-								<node index="4" name="sysContact" desc="" type="scalar" access="read_only" status="mandatory" syntax="string">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="4" name="sysContact" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="string" />
 								</node>
-								<node index="5" name="sysName" desc="" type="scalar" access="read_only" status="mandatory" syntax="string">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="5" name="sysName" desc="" type="scalar" access="read_write" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="string" />
 								</node>
-								<node index="6" name="sysLocation" desc="" type="scalar" access="read_only" status="mandatory" syntax="string">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="6" name="sysLocation" desc="" type="scalar" access="read_write" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="string" />
 								</node>
-								<node index="7" name="sysServices" desc="" type="scalar" access="read_only" status="mandatory" syntax="integer">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="7" name="sysServices" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
 								</node>
 							</node>
 							<node index="2" name="interface" desc="" type="node">
-								<node index="1" name="ifNumber" desc="" type="scalar" access="read_only" status="mandatory" syntax="integer">
-									<node index="0" name="0" desc="" type="value" />
+								<node index="1" name="ifNumber" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
 								</node>
 								<node index="2" name="ifTable" desc="" type="table" access="not-accessible" status="mandotory" syntax="sequence">
 									<node index="1" name="ifEntry" desc="" type="entry" access="not-accessible" status="mandotory" syntax="entry">
@@ -41,7 +41,7 @@
 										<node index="3" name="ifType" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
 										<node index="4" name="ifMtu" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
 										<node index="5" name="ifSpeed" desc="" type="column" access="read_only" status="mandotory" syntax="gauge" />
-										<node index="6" name="ifPhysAddress" desc="" type="column" access="read_only" status="mandotory" syntax="address" />
+										<node index="6" name="ifPhysAddress" desc="" type="column" access="read_only" status="mandotory" syntax="string" />
 										<node index="7" name="ifAdminStatus" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
 										<node index="8" name="ifOperStatus" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
 										<node index="9" name="ifLastChange" desc="" type="column" access="read_only" status="mandotory" syntax="timeticks" />

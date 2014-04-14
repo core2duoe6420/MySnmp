@@ -33,6 +33,7 @@ namespace mysnmp {
 		void AddPduErrStatus(int err) { this->pduErrStatus.push_back(err); }
 		void AddSnmpErrStatus(int err) { this->snmpErrStatus.push_back(err); }
 		int GetRequestId() const { return requestId; }
+		SnmpType GetType() const { return type; }
 		void AddVb(Snmp_pp::Vb& vb) { vblist.push_back(vb); }
 		const std::vector<int>& GetSnmpErrStatus() const { return snmpErrStatus; }
 		const std::vector<int>& GetPduErrStatus() const { return pduErrStatus; }

@@ -170,6 +170,9 @@
     <ClCompile Include="src\InterfaceModule.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="src\SnmpSetRequest.cpp">
+      <Filter>源文件\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MySnmp.rc">

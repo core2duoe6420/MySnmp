@@ -17,12 +17,12 @@ namespace mysnmp {
 		bool RemoveHost(int hostId);
 		void RefreshCanvas();
 		TopoHost * GetChosenHost() { return chosenTopoHost; }
-		
+
 		wxMenu * GetPopMenu() { return menuPop; }
-		
+
 	private:
 		wxList topoHosts;
-		
+
 		TopoHost * findTopoHost(const wxPoint& pt);
 		TopoHost * findOverlappedHost(TopoHost * host);
 		void OnClientEdgeAndScroll(const wxPoint& eventPoint, int threshold);

@@ -52,9 +52,9 @@ void TopoHost::drawNameOnBitmap() {
 }
 
 TopoHost::TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
-TopoCanvas * canvas, const wxString& ipAddress, const wxString& name) :
-canvas(canvas), hostId(hostId), originBitmap(bitmap), 
-point(point), ipAddress(ipAddress), name(name) {
+				   TopoCanvas * canvas, const wxString& ipAddress, const wxString& name) :
+				   canvas(canvas), hostId(hostId), originBitmap(bitmap),
+				   point(point), ipAddress(ipAddress), name(name) {
 	drawNameOnBitmap();
 }
 

@@ -44,6 +44,24 @@ namespace mysnmp {
 
 	};
 
+	class SnmpSetRequest : public SnmpRequest {
+	private:
+		RequestManager * manager;
+		std::vector<Snmp_pp::Vb> vbs;
+
+	public:
+		SnmpSetRequest(int requestId, Host& host, RequestManager * manager) :
+			SnmpRequest(requestId, host, SnmpType::set), manager(manager) {}
+
+		virtual ~SnmpSetRequest() {}
+
+		bool AddVb(const Snmp_pp::Oid& oid, const char * value);
+		bool AddVb(const char * oidstr, const char * value);
+		bool AddVb(const OidNode * oidnode, const char * oidstr, const char * value);
+
+		static void * Run(void * data);
+	};
+
 	class SnmpGetRequest : public SnmpRequest {
 	private:
 		RequestManager * manager;
@@ -59,7 +77,7 @@ namespace mysnmp {
 
 	public:
 		SnmpGetRequest(int requestId, Host& host, RequestManager * manager) :
-			SnmpRequest(requestId, host, SnmpType::get), oidTotalCount(0), manager(manager) {};
+			SnmpRequest(requestId, host, SnmpType::get), oidTotalCount(0), manager(manager) {}
 
 		virtual ~SnmpGetRequest() {}
 

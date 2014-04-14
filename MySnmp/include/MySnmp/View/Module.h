@@ -21,7 +21,7 @@ namespace mysnmp {
 	public:
 		ColumnInfo(const wxString& name, int size) :
 			columnName(name), columnSize(size), hasValueMap(false) {}
-		
+
 		wxString MapValueToString(int value) const {
 			std::unordered_map<int, wxString>::const_iterator iter = valueMap.find(value);
 			if (iter == valueMap.end())

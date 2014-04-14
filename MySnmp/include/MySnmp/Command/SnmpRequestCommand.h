@@ -1,6 +1,7 @@
 #ifndef __SNMP_REQEUST_COMMAND_H
 #define __SNMP_REQEUST_COMMAND_H
 
+#include <wx/string.h>
 #include <MySnmp/Command/Command.h>
 
 namespace mysnmp {
@@ -27,7 +28,7 @@ namespace mysnmp {
 		void SetBulkNonRepeater(int value);
 		void SetBulkMaxRepeater(int value);
 		void AddOid(const char * oidstr);
-
+		void AddVb(const char * oidstr, const wxString& value);
 		virtual int Execute();
 	};
 }

@@ -24,9 +24,10 @@ namespace mysnmp {
 		wxTextCtrl * txtUDPPort;
 		wxTextCtrl * txtIpAddress;
 		wxComboBox * cbVersion;
+
+		void ShowErrorDialog(const wxString& text, const wxString& caption);
 		virtual bool TransferDataToWindow();
 		virtual bool TransferDataFromWindow();
-		void ShowErrorDialog(const wxString& text, const wxString& caption);
 
 		wxString strName;
 		wxString strReadCommunity;

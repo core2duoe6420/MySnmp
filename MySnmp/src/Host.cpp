@@ -33,8 +33,14 @@ void Host::AddOidValueFromSnmpResult(SnmpResult * result) {
 	const std::vector<Snmp_pp::Vb>& vblist = result->GetVbList();
 	const std::vector<int>& snmpErrList = result->GetSnmpErrStatus();
 	const std::vector<int>& pduErrList = result->GetPduErrStatus();
-	for (int i = 0; i < vblist.size(); i++)
-		host.AddOidValue(vblist[i], snmpErrList[i], pduErrList[i]);
+	switch (result->GetType()) {
+	default:
+		for (int i = 0; i < vblist.size(); i++)
+			host.AddOidValue(vblist[i], snmpErrList[i], pduErrList[i]);
+		break;
+
+	}
+
 }
 
 //void main() {

@@ -6,19 +6,20 @@
 
 namespace mysnmp {
 	enum OidTypeEnum {
-		node, scalar, table, entry, column, value,
+		TYPE_NODE, TYPE_SCALAR, TYPE_TABLE, TYPE_ENTRY, TYPE_COLUMN, TYPE_VALUE,
 	};
 
 	enum OidAccessEnum {
-		access_none, read_only, read_write, write_only, not_accessible,
+		ACCESS_NONE, ACCESS_READ_ONLY, ACCESS_READ_WRITE, ACCESS_WRITE_ONLY, ACCESS_NOT_ACCESSIBLE,
 	};
 
 	enum OidStatusEnum {
-		status_none, mandatory, optional, obsolete,
+		STATUS_NONE, STATUS_MANDATORY, STATUS_OPTIONAL, STATUS_OBSOLETE,
 	};
 
 	enum OidSyntaxEnum {
-		string, integer, timeticks,
+		SYNTAX_NONE, SYNTAX_STRING, SYNTAX_INTEGER, SYNTAX_TIMETICKS,
+		SYNTAX_GAUGE, SYNTAX_OID, SYNTAX_COUNTER, SYNTAX_SEQUENCE, SYNTAX_ENTRY,
 	};
 
 	class OidNode {
@@ -36,11 +37,12 @@ namespace mysnmp {
 
 	public:
 		OidNode(int index, const char * name, const char * description,
-				OidTypeEnum type = OidTypeEnum::node,
-				OidAccessEnum access = OidAccessEnum::access_none,
-				OidStatusEnum status = OidStatusEnum::status_none)
+				OidTypeEnum type = OidTypeEnum::TYPE_NODE,
+				OidSyntaxEnum syntax = OidSyntaxEnum::SYNTAX_NONE,
+				OidAccessEnum access = OidAccessEnum::ACCESS_NONE,
+				OidStatusEnum status = OidStatusEnum::STATUS_NONE)
 				: index(index), name(name), description(description),
-				type(type), access(access),
+				type(type), access(access), syntax(syntax),
 				father(NULL), child(NULL), sibling(NULL) {};
 
 		~OidNode();
@@ -50,6 +52,7 @@ namespace mysnmp {
 		static OidTypeEnum GetTypeEnum(const char * typeStr);
 		static OidAccessEnum GetAccessEnum(const char * accessStr);
 		static OidStatusEnum GetStatusEnum(const char * statusStr);
+		static OidSyntaxEnum GetSyntaxEnum(const char * syntaxStr);
 
 		Snmp_pp::Oid ToOid() const;
 		std::string ToDottedString() const;
@@ -61,10 +64,10 @@ namespace mysnmp {
 			child->father = this;
 		}
 
-		OidTypeEnum GetTypeEnum() const { return this->type; }
-		OidAccessEnum GetAccessEnum() const { return this->access; }
-		OidStatusEnum GetStatusEnum() const { return this->status; }
-
+		OidTypeEnum GetType() const { return this->type; }
+		OidAccessEnum GetAccess() const { return this->access; }
+		OidStatusEnum GetStatus() const { return this->status; }
+		OidSyntaxEnum GetSyntax() const { return this->syntax; }
 		OidNode * GetFirstChild() const { return this->child; }
 		OidNode * GetFather() const { return this->father; }
 		OidNode * GetSibling() const { return this->sibling; }

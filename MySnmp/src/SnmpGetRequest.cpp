@@ -25,17 +25,17 @@ bool SnmpGetRequest::AddOid(const Snmp_pp::Oid& oid) {
 }
 
 bool SnmpGetRequest::AddOid(const OidNode * oid) {
-	switch (oid->GetTypeEnum()) {
-	case OidTypeEnum::node:
-	case OidTypeEnum::scalar:
+	switch (oid->GetType()) {
+	case OidTypeEnum::TYPE_NODE:
+	case OidTypeEnum::TYPE_SCALAR:
 		this->getNextVector.push_back(oid->ToOid());
 		break;
-	case OidTypeEnum::table:
-	case OidTypeEnum::entry:
-	case OidTypeEnum::column:
+	case OidTypeEnum::TYPE_TABLE:
+	case OidTypeEnum::TYPE_ENTRY:
+	case OidTypeEnum::TYPE_COLUMN:
 		this->getBulkVector.push_back(oid->ToOid());
 		break;
-	case OidTypeEnum::value:
+	case OidTypeEnum::TYPE_VALUE:
 		this->getVector.push_back(oid->ToOid());
 		break;
 	}

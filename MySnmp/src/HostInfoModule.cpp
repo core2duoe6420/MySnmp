@@ -46,7 +46,7 @@ module(module) {
 	this->Center();
 	chosenHost = module->GetCanvas()->GetChosenHost();
 	this->SetTitle(chosenHost->GetName() + L" 主机信息");
-	
+
 	/* 先发送请求说不定在界面布局完成后结果已经抵达 */
 	sendHostInfoRequest();
 	this->SetBackgroundColour(*wxWHITE);
@@ -87,7 +87,19 @@ void FrmHostInfo::OnListDoubleClick(wxListEvent& event) {
 	int index = event.GetIndex();
 	wxString name = infolist->GetItemText(index, 0);
 	wxString value = infolist->GetItemText(index, 1);
-	wxMessageBox(value, name);
+	if (name == L"系统名字") {
+		wxTextEntryDialog * dialog = new wxTextEntryDialog(this, L"输入新的系统名字",
+														   L"修改系统名字信息", value, wxOK | wxCANCEL);
+		if (dialog->ShowModal() == wxID_OK) {
+			if (dialog->GetValue() != value) {
+				SnmpRequestCommand command(SnmpType::set, chosenHost->GetHostId());
+				command.AddVb("1.3.6.1.2.1.1.5.0", dialog->GetValue());
+				command.Execute();
+			}
+		}
+	} else {
+		wxMessageBox(value, name);
+	}
 }
 
 void FrmHostInfo::OnCloseClick(wxCommandEvent& event) {

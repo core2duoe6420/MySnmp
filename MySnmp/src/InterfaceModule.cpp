@@ -100,7 +100,30 @@ module(module) {
 }
 
 void FrmInterface::OnListDoubleClick(wxListEvent& event) {
-
+	int ifIndex = event.GetIndex();
+	wxString statusStr = iflist->GetItemText(ifIndex, 6);
+	wxString choices[3];
+	choices[0] = L"启动";
+	choices[1] = L"关闭";
+	choices[2] = L"测试中";
+	wxSingleChoiceDialog * choiceDialog = new wxSingleChoiceDialog(this,
+																   L"请选择新的管理状态",
+																   L"修改管理状态",
+																   3, choices);
+	if (choiceDialog->ShowModal() == wxID_OK) {
+		wxString chosenStr = choiceDialog->GetStringSelection();
+		if (chosenStr != statusStr) {
+			const char * oidpre = "1.3.6.1.2.1.2.2.1.7";
+			wxString oidstr, valuestr;
+			oidstr.Printf("%s.%d", oidpre, ifIndex + 1);
+			int value = choiceDialog->GetSelection() + 1;
+			valuestr.Printf("%d", value);
+			SnmpRequestCommand command(SnmpType::set, chosenHost->GetHostId());
+			command.AddVb(oidstr.mb_str(), valuestr.mb_str());
+			command.Execute();
+		}
+	}
+	choiceDialog->Destroy();
 }
 
 void FrmInterface::OnCloseClick(wxCommandEvent& event) {

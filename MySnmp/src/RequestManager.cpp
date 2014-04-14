@@ -105,8 +105,12 @@ SnmpGetRequest * RequestManager::CreateSnmpGetRequest(Host& host) {
 	return dynamic_cast<SnmpGetRequest *>(requestHolder->request);
 }
 
-
-
+SnmpSetRequest * RequestManager::CreateSnmpSetRequest(Host& host) {
+	int requestId = nextRequestId.GetAndInc();
+	RequestHolder * requestHolder = new RequestHolder(SnmpType::set, requestId, host, this);
+	this->requestHolders.Insert(requestId, requestHolder);
+	return dynamic_cast<SnmpSetRequest *>(requestHolder->request);
+}
 
 //debug
 void handler(SnmpResult * result) {
