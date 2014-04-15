@@ -139,6 +139,14 @@ namespace mysnmp {
 		virtual void OnMenuItemClick(wxCommandEvent& event);
 		XMLColumnCollection * GetColumnCollection() const { return columnInfos; }
 	};
+
+	class ARPTableModule : public Module {
+	public:
+		ARPTableModule(const wxString& menuLabel) :
+			Module(menuLabel) {}
+
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
 }
 
 #endif

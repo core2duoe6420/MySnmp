@@ -170,6 +170,9 @@
     <ClCompile Include="src\SnmpSetRequest.cpp">
       <Filter>源文件\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\ARPTableModule.cpp">
+      <Filter>源文件\View\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MySnmp.rc">

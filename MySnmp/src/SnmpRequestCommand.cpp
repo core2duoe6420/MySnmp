@@ -23,6 +23,7 @@ SnmpRequestCommand::SnmpRequestCommand(SnmpType type, int hostId) : type(type) {
 	default:
 		break;
 	}
+	this->requestId = request->GetRequestId();
 }
 
 void SnmpRequestCommand::SetBulkNonRepeater(int value) {
@@ -62,5 +63,5 @@ int SnmpRequestCommand::Execute() {
 	if (!host)
 		return -1;
 	RequestManager::GetManager().AddRequestToQueue(request);
-	return 0;
+	return requestId;
 }

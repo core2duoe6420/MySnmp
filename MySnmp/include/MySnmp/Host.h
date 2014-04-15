@@ -21,13 +21,15 @@ namespace mysnmp {
 	class VbExtended {
 	private:
 		Snmp_pp::Vb vb;
+		//最近更新该Vb的requestId
+		int requestId;
 		int lastSnmpErrStatus;
 		int lastPduErrStatus;
 		/* 目前没有使用该变量 */
 		int lastSetErrStatus;
 	public:
-		VbExtended(const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0,
-				   int lastPduErrStatus = 0, int lastSetErrStatus = 0) :
+		VbExtended(int requestId, const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0,
+				   int lastPduErrStatus = 0, int lastSetErrStatus = 0) : requestId(requestId),
 				   vb(vb), lastSnmpErrStatus(lastSnmpErrStatus), lastPduErrStatus(lastPduErrStatus),
 				   lastSetErrStatus(lastSetErrStatus) {}
 
@@ -35,6 +37,7 @@ namespace mysnmp {
 		int GetLastSnmpErrStatus() const { return lastSnmpErrStatus; }
 		int GetLastPduErrStatus() const { return lastPduErrStatus; }
 		int GetLastSetErrStatus() const { return lastSetErrStatus; }
+		int GetLastRequestId() const { return requestId; }
 	};
 
 	class Host {
@@ -66,17 +69,15 @@ namespace mysnmp {
 		/* @return:如果哈希表中没有Vb，返回true
 				   如过已有Vb，更新原值，返回false
 				   */
-		bool AddOidValue(const Snmp_pp::Vb& vb, int lastSnmpErrStatus, int lastPduErrStatus);
-		/* @return:目前总返回true */
-		bool AddOidValue(const Snmp_pp::Vb * vb, int vbCount, int lastSnmpErrStatus, int lastPduErrStatus);
-		/* @return:同AddOidValue(const Snmp_pp::Vb * vb) */
-		bool AddOidValue(const char * oid, const char * value, int lastSnmpErrStatus, int lastPduErrStatus);
+		bool AddOidValue(int requestId, const Snmp_pp::Vb& vb, int lastSnmpErrStatus, int lastPduErrStatus);
 
 		VbExtended * GetOidValue(const char * oid) const;
 		/* 返回的vector是使用new在堆上创建的，调用者需要负责delete
 		 * vector中的VbExtented*不要释放
+		 *
+		 * 使用requestId来保证获得的子树是一次请求中获得的
 		 */
-		std::vector<VbExtended *> * GetOidSubtree(const char * oidstr) const;
+		std::vector<VbExtended *> * GetOidSubtree(const char * oidstr, int requestId) const;
 
 		/* @return:找到值并删除返回true，无此值返回false */
 		bool RemoveOidValue(const Snmp_pp::Vb& vb) {

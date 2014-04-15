@@ -55,6 +55,8 @@ OidStatusEnum OidNode::GetStatusEnum(const char * statusStr) {
 		return OidStatusEnum::STATUS_OPTIONAL;
 	if (strcmp(statusStr, "obsolete") == 0)
 		return OidStatusEnum::STATUS_OBSOLETE;
+	if (strcmp(statusStr, "deprecated") == 0)
+		return OidStatusEnum::TYPE_DEPRECATED;
 	return OidStatusEnum::STATUS_NONE;
 }
 

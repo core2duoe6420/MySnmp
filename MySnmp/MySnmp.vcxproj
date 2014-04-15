@@ -103,6 +103,7 @@
     <ClInclude Include="include\MySnmp\View\Module.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ARPTableModule.cpp" />
     <ClCompile Include="src\DeleteHostModule.cpp" />
     <ClCompile Include="src\DiaHostInfo.cpp" />
     <ClCompile Include="src\HostCommand.cpp" />

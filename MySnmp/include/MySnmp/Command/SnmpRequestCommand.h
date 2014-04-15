@@ -17,10 +17,10 @@ namespace mysnmp {
 	class SnmpRequest;
 	class Host;
 	class SnmpRequestCommand : public Command {
-
 	private:
 		SnmpRequest * request;
 		int hostId;
+		int requestId;
 		SnmpType type;
 		Host * host;
 	public:
@@ -30,6 +30,7 @@ namespace mysnmp {
 		void SetBulkMaxRepeater(int value);
 		void AddOid(const char * oidstr);
 		void AddVb(const char * oidstr, const wxString& value);
+		/* ³É¹¦£¬·µ»ØrequestId */
 		virtual int Execute();
 	};
 }

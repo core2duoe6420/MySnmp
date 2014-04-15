@@ -63,11 +63,13 @@ namespace mysnmp {
 	class GetOidSubtreeCommand : public Command {
 	private:
 		int hostid;
+		int requestId;
 		const char * oidstr;
 		std::vector<Snmp_pp::Vb> results;
 
 	public:
-		GetOidSubtreeCommand(int hostid) : hostid(hostid), oidstr(NULL) {}
+		GetOidSubtreeCommand(int hostid, int requestId) :
+			hostid(hostid), requestId(requestId), oidstr(NULL) {}
 		virtual int Execute();
 
 		const std::vector<Snmp_pp::Vb>& GetResults() const { return results; }
@@ -81,6 +83,7 @@ namespace mysnmp {
 		wxString result;
 	public:
 		GetHostOidCommand(int hostid) : hostid(hostid), oidstr(NULL) {}
+
 		virtual int Execute();
 
 		wxString GetResult() { return result; }

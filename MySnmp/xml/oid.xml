@@ -61,6 +61,15 @@
 									</node>
 								</node>
 							</node>
+							<node index="3" name="at" desc="" type="node">
+								<node index="1" name="atTable" desc="" type="table" access="not-accessible" status="deprecated" syntax="sequence">
+									<node index="1" name="atEntry" desc="" type="entry" access="not-accessible" status="deprecated" syntax="entry">
+										<node index="1" name="atIfIndex" desc="" type="column" access="read_write" status="deprecated" syntax="integer" />
+										<node index="2" name="atPhysAddress" desc="" type="column" access="read_write" status="deprecated" syntax="string" />
+										<node index="3" name="atNetAddress" desc="" type="column" access="read_write" status="deprecated" syntax="string" />
+									</node>
+								</node>
+							</node>
 						</node>
 					</node>
 				</node>

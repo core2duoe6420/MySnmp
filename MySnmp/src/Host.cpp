@@ -6,26 +6,12 @@
 
 using namespace mysnmp;
 
-bool Host::AddOidValue(const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) {
-	VbExtended * vbe = new VbExtended(vb, lastSnmpErrStatus, lastPduErrStatus);
+bool Host::AddOidValue(int requestId, const Snmp_pp::Vb& vb, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) {
+	VbExtended * vbe = new VbExtended(requestId, vb, lastSnmpErrStatus, lastPduErrStatus);
 	std::string oid(vb.get_printable_oid());
 	return this->oidValues.Insert(oid, vbe, true, [](const std::string& oidStr, VbExtended* & vbe) {
 		delete vbe;
 	});
-}
-
-bool Host::AddOidValue(const Snmp_pp::Vb * vb, int vbCount, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) {
-	for (int i = 0; i < vbCount; i++)
-		AddOidValue(vb[i], lastSnmpErrStatus, lastPduErrStatus);
-	return true;
-}
-
-bool Host::AddOidValue(const char * oid, const char * value, int lastSnmpErrStatus = 0, int lastPduErrStatus = 0) {
-	Snmp_pp::Vb vb;
-	vb.set_value(value);
-	Snmp_pp::Oid newoid(oid);
-	vb.set_oid(newoid);
-	return AddOidValue(vb, lastSnmpErrStatus, lastPduErrStatus);
 }
 
 void Host::AddOidValueFromSnmpResult(SnmpResult * result) {
@@ -36,7 +22,7 @@ void Host::AddOidValueFromSnmpResult(SnmpResult * result) {
 	switch (result->GetType()) {
 	default:
 		for (int i = 0; i < vblist.size(); i++)
-			host.AddOidValue(vblist[i], snmpErrList[i], pduErrList[i]);
+			host.AddOidValue(result->GetRequestId(), vblist[i], snmpErrList[i], pduErrList[i]);
 		break;
 
 	}
@@ -49,39 +35,35 @@ VbExtended * Host::GetOidValue(const char * oid) const {
 	return *retval;
 }
 
-/* 这段代码糟糕到了一定境界 */
-std::vector<VbExtended *> * Host::GetOidSubtree(const char * oidstr) const {
+/* 这段代码糟糕到了一定境界
+ * 但是一来SafeType没有其他办法遍历
+ * 二来不知为何lambda表达式不能引用局部变量
+ * 只能暂时这样了。
+ * 我实在太弱了
+ */
+struct Param {
+	const char * oidstr;
+	int requestId;
+};
+
+std::vector<VbExtended *> * Host::GetOidSubtree(const char * oidstr, int requestId) const {
 	std::vector<VbExtended *> * ret;
+	Param param;
+	param.requestId = requestId;
+	param.oidstr = oidstr;
 	ret = (vector<VbExtended *> *)((Host*)this)->oidValues.DoSafeWork(
-		[](SafeHashMap<std::string, VbExtended *>::HashMap * hashmap, void * data) mutable {
-		Snmp_pp::Oid oid((const char *)data);
+		/* 这是一个lambda表达式作函数指针的参数，下面是个函数 */
+		[](SafeHashMap<std::string, VbExtended *>::HashMap * hashmap, void * data) {
+		Snmp_pp::Oid oid(((Param*)data)->oidstr);
 		int len = oid.len();
 		std::vector<VbExtended *> * vector = new std::vector<VbExtended *>();
 		SafeHashMap<std::string, VbExtended *>::HashMap::iterator iter = hashmap->begin();
 		for (; iter != hashmap->end(); iter++) {
-			if (oid.nCompare(len, iter->second->GetVb().get_oid()) == 0)
+			if (oid.nCompare(len, iter->second->GetVb().get_oid()) == 0 &&
+				iter->second->GetLastRequestId() == ((Param*)data)->requestId)
 				vector->push_back(iter->second);
 		}
 		return (void*)vector;
-	}, (void *)oidstr);
+	}, /*这是第二个参数，是传给lambda表达式的参数，权宜之计 */ (void *)&param);
 	return ret;
 }
-
-//void main() {
-//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-//	OidTree oidtree("oid.xml");
-//	Host host(oidtree, (Snmp_pp::IpAddress)"1.1.1.1");
-//	host.AddOidValue("1.1.1", "123");
-//	Snmp_pp::Vb vb;
-//	vb.set_oid("1.2.3.4");
-//	vb.set_value("999");
-//	host.AddOidValue(&vb);
-//	const Snmp_pp::Vb * vbstr;
-//	vbstr = host.GetOidValue("1.2.3.4");
-//	std::cout << vbstr->get_printable_value();
-//	std::cout << host.AddOidValue("1.1.1", "234");
-//	std::cout << host.GetOidValue("1.1.1")->get_printable_value();
-//	std::cout << host.RemoveOidValue(vbstr);
-//	std::cout << host.RemoveOidValue("1.1.1");
-//	std::cout << host.RemoveOidValue("1.2.3");
-//}

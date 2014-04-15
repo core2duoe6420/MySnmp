@@ -2,6 +2,8 @@
 #include <MySnmp/OidTree.h>
 #include <MySnmp/Command/HostCommand.h>
 
+#include <algorithm>
+
 #include <MySnmp/debug.h>
 
 using namespace mysnmp;
@@ -132,10 +134,14 @@ int GetOidSubtreeCommand::Execute() {
 	if (!host || !oidstr)
 		return -1;
 
-	std::vector<VbExtended *> * vbes = host->GetOidSubtree(oidstr);
+	results.clear();
+	std::vector<VbExtended *> * vbes = host->GetOidSubtree(oidstr, requestId);
 	for (int i = 0; i < vbes->size(); i++)
-		results.push_back((*vbes)[i]->GetVb());
+		results.push_back(((*vbes)[i])->GetVb());
 
 	delete vbes;
+	sort(results.begin(), results.end(), [](const Snmp_pp::Vb& vb1, const Snmp_pp::Vb& vb2) {
+		return vb1.get_oid() < vb2.get_oid();
+	});
 	return results.size();
 }
