@@ -9,7 +9,8 @@ namespace mysnmp {
 #ifndef SNMPTYPE
 #define SNMPTYPE
 	enum SnmpType {
-		get, set, trap, infrom
+		SNMP_GET, SNMP_GETNEXT, SNMP_GETBULK, SNMP_WALK,
+		SNMP_SET, SNMP_TRAP, SNMP_INFORM
 	};
 #endif
 

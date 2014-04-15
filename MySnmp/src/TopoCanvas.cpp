@@ -1,8 +1,10 @@
 #include <MySnmp/View/TopoCanvas.h>
 
-#include <MySnmp/debug.h>
-#include <wx/dcbuffer.h>
+#include <wx/wx.h>
 #include <wx/dcgraph.h>
+#include <wx/dcbuffer.h>
+
+#include <MySnmp/debug.h>
 
 using namespace mysnmp;
 

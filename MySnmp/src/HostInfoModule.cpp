@@ -2,6 +2,7 @@
 #include <MySnmp/Command/SnmpRequestCommand.h>
 #include <MySnmp/Command/HostCommand.h>
 
+#include <wx/wx.h>
 #include <wx/listctrl.h>
 
 #include <MySnmp/debug.h>
@@ -92,7 +93,7 @@ void FrmHostInfo::OnListDoubleClick(wxListEvent& event) {
 														   L"修改系统名字信息", value, wxOK | wxCANCEL);
 		if (dialog->ShowModal() == wxID_OK) {
 			if (dialog->GetValue() != value) {
-				SnmpRequestCommand command(SnmpType::set, chosenHost->GetHostId());
+				SnmpRequestCommand command(SnmpType::SNMP_SET, chosenHost->GetHostId());
 				command.AddVb("1.3.6.1.2.1.1.5.0", dialog->GetValue());
 				command.Execute();
 			}
@@ -130,7 +131,7 @@ void FrmHostInfo::eventInitialize() {
 }
 
 void FrmHostInfo::sendHostInfoRequest() {
-	SnmpRequestCommand command(SnmpType::get, chosenHost->GetHostId());
+	SnmpRequestCommand command(SnmpType::SNMP_GET, chosenHost->GetHostId());
 	char oidstr[] = "1.3.6.1.2.1.1.1.0";
 	int pos = strlen(oidstr) - 3;
 	for (int i = 1; i < 8; i++) {

@@ -40,7 +40,31 @@ void Host::AddOidValueFromSnmpResult(SnmpResult * result) {
 		break;
 
 	}
+}
 
+VbExtended * Host::GetOidValue(const char * oid) const {
+	VbExtended ** retval = NULL;
+	if ((retval = this->oidValues.Find(oid)) == NULL)
+		return NULL;
+	return *retval;
+}
+
+/* 这段代码糟糕到了一定境界 */
+std::vector<VbExtended *> * Host::GetOidSubtree(const char * oidstr) const {
+	std::vector<VbExtended *> * ret;
+	ret = (vector<VbExtended *> *)((Host*)this)->oidValues.DoSafeWork(
+		[](SafeHashMap<std::string, VbExtended *>::HashMap * hashmap, void * data) mutable {
+		Snmp_pp::Oid oid((const char *)data);
+		int len = oid.len();
+		std::vector<VbExtended *> * vector = new std::vector<VbExtended *>();
+		SafeHashMap<std::string, VbExtended *>::HashMap::iterator iter = hashmap->begin();
+		for (; iter != hashmap->end(); iter++) {
+			if (oid.nCompare(len, iter->second->GetVb().get_oid()) == 0)
+				vector->push_back(iter->second);
+		}
+		return (void*)vector;
+	}, (void *)oidstr);
+	return ret;
 }
 
 //void main() {

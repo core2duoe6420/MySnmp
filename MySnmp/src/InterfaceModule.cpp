@@ -1,6 +1,8 @@
 #include <MySnmp/View/Module.h>
 #include <MySnmp/Command/HostCommand.h>
 #include <MySnmp/Command/SnmpRequestCommand.h>
+
+#include <wx/wx.h>
 #include <wx/listctrl.h>
 #include <wx/busyinfo.h>
 
@@ -118,7 +120,7 @@ void FrmInterface::OnListDoubleClick(wxListEvent& event) {
 			oidstr.Printf("%s.%d", oidpre, ifIndex + 1);
 			int value = choiceDialog->GetSelection() + 1;
 			valuestr.Printf("%d", value);
-			SnmpRequestCommand command(SnmpType::set, chosenHost->GetHostId());
+			SnmpRequestCommand command(SnmpType::SNMP_SET, chosenHost->GetHostId());
 			command.AddVb(oidstr.mb_str(), valuestr.mb_str());
 			command.Execute();
 		}
@@ -158,7 +160,7 @@ int FrmInterface::getIfNumber() {
 	 * 写在这里而且不是由调用者负责
 	 */
 	wxBusyInfo busyInfo(L"正在获取接口数量信息，请稍后");
-	SnmpRequestCommand requestCommand(SnmpType::get, chosenHost->GetHostId());
+	SnmpRequestCommand requestCommand(SnmpType::SNMP_GET, chosenHost->GetHostId());
 	const char * oidstr = "1.3.6.1.2.1.2.1.0";
 	requestCommand.AddOid(oidstr);
 	requestCommand.Execute();
@@ -179,7 +181,7 @@ int FrmInterface::getIfNumber() {
 }
 
 void FrmInterface::sendInterfaceRequest() {
-	SnmpRequestCommand command(SnmpType::get, chosenHost->GetHostId());
+	SnmpRequestCommand command(SnmpType::SNMP_GETBULK, chosenHost->GetHostId());
 	const char * oidstr = "1.3.6.1.2.1.2.2.1";
 	command.AddOid(oidstr);
 	command.SetBulkNonRepeater(0);
@@ -190,6 +192,7 @@ void FrmInterface::sendInterfaceRequest() {
 void FrmInterface::updateListCtrl() {
 	GetHostOidCommand command(chosenHost->GetHostId());
 	const char * oidpre = "1.3.6.1.2.1.2.2.1";
+
 	wxString oidstr;
 	for (int i = 0; i < ifNumber; i++) {
 		for (int j = 0; j < module->GetColumnCollection()->GetColumnCount(); j++) {

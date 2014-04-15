@@ -72,9 +72,6 @@
     <ClInclude Include="include\MySnmp\SnmpRequest.h">
       <Filter>头文件\Core</Filter>
     </ClInclude>
-    <ClInclude Include="include\MySnmp\SnmpRequestConfig.h">
-      <Filter>头文件\Core</Filter>
-    </ClInclude>
     <ClInclude Include="include\MySnmp\SnmpResult.h">
       <Filter>头文件\Core</Filter>
     </ClInclude>

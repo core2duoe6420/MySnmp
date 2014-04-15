@@ -1,7 +1,9 @@
 #ifndef __TOPOCANVAS_H
 #define __TOPOCANVAS_H
 
-#include <wx/wx.h>
+#include <wx/scrolwin.h>
+#include <wx/bitmap.h>
+
 #include <vector>
 
 namespace mysnmp {

@@ -104,7 +104,7 @@ namespace mysnmp {
 	public:
 		typedef std::unordered_map<keyType, valueType> HashMap;
 		typedef void(*OnDeleteCallback)(const keyType&, valueType&);
-		typedef void(*Callback)(HashMap * hashmap);
+		typedef void*(*Callback)(HashMap * hashmap, void * data);
 	private:
 		HashMap * hashmap;
 		Lock * lock;
@@ -206,15 +206,17 @@ namespace mysnmp {
 				this->lock->Exit();
 		}
 
-		void DoSafeWork(Callback callback) {
+		void * DoSafeWork(Callback callback, void * data) {
+			void * ret;
 			if (this->lock)
 				this->lock->Enter(1);
 
 			if (callback)
-				callbck(this->hashmap);
+				ret = callback(this->hashmap, data);
 
 			if (this->lock)
 				this->lock->Exit();
+			return ret;
 		}
 	};
 }

@@ -1,6 +1,6 @@
-#include <MySnmp/Command/HostCommand.h>
 #include <MySnmp/HostManager.h>
 #include <MySnmp/OidTree.h>
+#include <MySnmp/Command/HostCommand.h>
 
 #include <MySnmp/debug.h>
 
@@ -125,4 +125,17 @@ int HostInfoCommand::Execute() {
 	HostCommand::SetConfig(host);
 	host->UnLock();
 	return 0;
+}
+
+int GetOidSubtreeCommand::Execute() {
+	Host * host = HostManager::GetHost(hostid);
+	if (!host || !oidstr)
+		return -1;
+
+	std::vector<VbExtended *> * vbes = host->GetOidSubtree(oidstr);
+	for (int i = 0; i < vbes->size(); i++)
+		results.push_back((*vbes)[i]->GetVb());
+
+	delete vbes;
+	return results.size();
 }

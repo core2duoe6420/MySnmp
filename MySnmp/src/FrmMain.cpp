@@ -6,6 +6,8 @@
 #include <MySnmp/View/Module.h>
 #include <MySnmp/Command/HostCommand.h>
 
+#include <wx/sizer.h>
+
 #include <MySnmp/debug.h>
 
 using namespace mysnmp;

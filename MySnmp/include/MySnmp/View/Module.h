@@ -4,7 +4,11 @@
 #include <vector>
 #include <unordered_map>
 
-#include <wx/wx.h>
+#include <wx/string.h>
+#include <wx/list.h>
+#include <wx/menu.h>
+#include <wx/menuitem.h>
+#include <wx/scrolwin.h>
 
 #include <MySnmp/View/TopoCanvas.h>
 

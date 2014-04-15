@@ -21,11 +21,23 @@ namespace mysnmp {
 
 		RequestHolder(SnmpType type, int requestId, Host& host, RequestManager * manager) {
 			switch (type) {
-			case SnmpType::get:
+			case SnmpType::SNMP_GET:
 				request = new SnmpGetRequest(requestId, host, manager);
 				thread = new Thread(SnmpGetRequest::Run);
 				break;
-			case SnmpType::set:
+			case SnmpType::SNMP_GETNEXT:
+				request = new SnmpGetNextRequest(requestId, host, manager);
+				thread = new Thread(SnmpGetNextRequest::Run);
+				break;
+			case SnmpType::SNMP_GETBULK:
+				request = new SnmpGetBulkRequest(requestId, host, manager);
+				thread = new Thread(SnmpGetBulkRequest::Run);
+				break;
+			case SnmpType::SNMP_WALK:
+				request = new SnmpWalkRequest(requestId, host, manager);
+				thread = new Thread(SnmpWalkRequest::Run);
+				break;
+			case SnmpType::SNMP_SET:
 				request = new SnmpSetRequest(requestId, host, manager);
 				thread = new Thread(SnmpSetRequest::Run);
 				break;
@@ -120,7 +132,7 @@ namespace mysnmp {
 			clearAllReqeustHolders();
 		}
 
-		SnmpGetRequest * CreateSnmpGetRequest(Host& host);
+		SnmpGetRequestBase * CreateSnmpGetRequest(Host& host, SnmpType type = SnmpType::SNMP_GET);
 		SnmpSetRequest * CreateSnmpSetRequest(Host& host);
 
 		void AddRequestToQueue(SnmpRequest * request);

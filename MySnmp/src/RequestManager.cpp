@@ -98,30 +98,30 @@ void RequestManager::AddResultToQueue(RequestHolder * holder) {
 	this->sem_resultWaitQueueEmpty.Post();
 }
 
-SnmpGetRequest * RequestManager::CreateSnmpGetRequest(Host& host) {
+SnmpGetRequestBase * RequestManager::CreateSnmpGetRequest(Host& host, SnmpType type) {
 	int requestId = nextRequestId.GetAndInc();
-	RequestHolder * requestHolder = new RequestHolder(SnmpType::get, requestId, host, this);
+	RequestHolder * requestHolder = new RequestHolder(type, requestId, host, this);
 	this->requestHolders.Insert(requestId, requestHolder);
-	return dynamic_cast<SnmpGetRequest *>(requestHolder->request);
+	return dynamic_cast<SnmpGetRequestBase *>(requestHolder->request);
 }
 
 SnmpSetRequest * RequestManager::CreateSnmpSetRequest(Host& host) {
 	int requestId = nextRequestId.GetAndInc();
-	RequestHolder * requestHolder = new RequestHolder(SnmpType::set, requestId, host, this);
+	RequestHolder * requestHolder = new RequestHolder(SnmpType::SNMP_SET, requestId, host, this);
 	this->requestHolders.Insert(requestId, requestHolder);
 	return dynamic_cast<SnmpSetRequest *>(requestHolder->request);
 }
 
-//debug
-void handler(SnmpResult * result) {
-	const Snmp_pp::IpAddress& address = result->GetHost().GetAddress();
-	std::cout << "Request " << result->GetRequestId() << " : " << address.get_printable() << endl;
-	const std::vector<Snmp_pp::Vb>& vblist = result->GetVbList();
-	for (int i = 0; i < vblist.size(); i++) {
-		const Snmp_pp::Vb& vb = vblist[i];
-		std::cout << vb.get_printable_oid() << " : " << vb.get_printable_value() << endl;
-	}
-}
+////debug
+//void handler(SnmpResult * result) {
+//	const Snmp_pp::IpAddress& address = result->GetHost().GetAddress();
+//	std::cout << "Request " << result->GetRequestId() << " : " << address.get_printable() << endl;
+//	const std::vector<Snmp_pp::Vb>& vblist = result->GetVbList();
+//	for (int i = 0; i < vblist.size(); i++) {
+//		const Snmp_pp::Vb& vb = vblist[i];
+//		std::cout << vb.get_printable_oid() << " : " << vb.get_printable_value() << endl;
+//	}
+//}
 
 //#include <MySnmp/OidTree.h>
 //OidTree oidtree("oid.xml");

@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <MySnmp/Host.h>
-#include <MySnmp/SnmpRequestConfig.h>
 
 namespace mysnmp {
 	class RequestManager;
@@ -17,7 +16,8 @@ namespace mysnmp {
 #ifndef SNMPTYPE
 #define SNMPTYPE
 	enum SnmpType {
-		get, set, trap, infrom
+		SNMP_GET, SNMP_GETNEXT, SNMP_GETBULK, SNMP_WALK,
+		SNMP_SET, SNMP_TRAP, SNMP_INFORM
 	};
 #endif
 
@@ -26,11 +26,12 @@ namespace mysnmp {
 		SnmpType type;
 		int requestId;
 		Host& host;
+		RequestManager * manager;
 		const char * errMsg;
 
 	public:
-		SnmpRequest(int requestId, Host& host, SnmpType type) :
-			requestId(requestId), host(host), type(type), errMsg(NULL) {
+		SnmpRequest(int requestId, SnmpType type, Host& host, RequestManager * manager) :
+			requestId(requestId), host(host), type(type), manager(manager), errMsg(NULL) {
 			host.Refer();
 		};
 
@@ -40,18 +41,19 @@ namespace mysnmp {
 
 		const char * GetErrMsg() const { return errMsg; }
 		SnmpType GetType() { return type; }
+		RequestManager * GetManager() const { return manager; }
+		Host& GetHost() const { return host; }
 		int GetRequestId() const { return requestId; }
 
 	};
 
 	class SnmpSetRequest : public SnmpRequest {
 	private:
-		RequestManager * manager;
 		std::vector<Snmp_pp::Vb> vbs;
 
 	public:
 		SnmpSetRequest(int requestId, Host& host, RequestManager * manager) :
-			SnmpRequest(requestId, host, SnmpType::set), manager(manager) {}
+			SnmpRequest(requestId, SnmpType::SNMP_SET, host, manager) {}
 
 		virtual ~SnmpSetRequest() {}
 
@@ -62,33 +64,66 @@ namespace mysnmp {
 		static void * Run(void * data);
 	};
 
-	class SnmpGetRequest : public SnmpRequest {
-	private:
-		RequestManager * manager;
-		SnmpGetRequestConfig config;
-		std::vector<Snmp_pp::Oid> getVector;
-		std::vector<Snmp_pp::Oid> getNextVector;
-		std::vector<Snmp_pp::Oid> getBulkVector;
-		int oidTotalCount;
-
-		void handleVector(std::vector<Snmp_pp::Oid>& vector,
-						  Snmp_pp::Snmp& snmp, Snmp_pp::SnmpTarget& target,
-						  Snmp_pp::Pdu& pdu, SnmpResult * result);
+	class SnmpGetRequestBase : public SnmpRequest {
+	protected:
+		std::vector<Snmp_pp::Oid> oids;
+		SnmpGetRequestBase(int requestId, SnmpType type, Host& host, RequestManager * manager) :
+			SnmpRequest(requestId, type, host, manager) {}
 
 	public:
+		bool AddOid(const char * oidstr);
+		bool AddOid(const Snmp_pp::Oid& oid);
+		bool AddOid(const OidNode * oid);
+		virtual ~SnmpGetRequestBase() {}
+		std::vector<Snmp_pp::Oid>& GetOids() { return oids; }
+	};
+
+	class SnmpGetRequest : public SnmpGetRequestBase {
+	public:
 		SnmpGetRequest(int requestId, Host& host, RequestManager * manager) :
-			SnmpRequest(requestId, host, SnmpType::get), oidTotalCount(0), manager(manager) {}
+			SnmpGetRequestBase(requestId, SnmpType::SNMP_GET, host, manager) {}
 
 		virtual ~SnmpGetRequest() {}
 
-		bool AddOid(const Snmp_pp::Oid& oid);
-		bool AddOid(const char * oidstr);
-		bool AddOid(const OidNode * oid);
+		static void * Run(void * data);
+	};
 
-		SnmpGetRequestConfig& GetConfig() { return config; }
+	class SnmpGetNextRequest : public SnmpGetRequestBase {
+	public:
+		SnmpGetNextRequest(int requestId, Host& host, RequestManager * manager) :
+			SnmpGetRequestBase(requestId, SnmpType::SNMP_GETNEXT, host, manager) {}
+
+		virtual ~SnmpGetNextRequest() {}
 
 		static void * Run(void * data);
+	};
 
+	class SnmpGetBulkRequest : public SnmpGetRequestBase {
+	private:
+		int maxReapter, nonRepeater;
+	public:
+		SnmpGetBulkRequest(int requestId, Host& host, RequestManager * manager) :
+			SnmpGetRequestBase(requestId, SnmpType::SNMP_GETBULK, host, manager),
+			maxReapter(0), nonRepeater(0) {}
+
+		virtual ~SnmpGetBulkRequest() {}
+
+		void SetMaxReapter(int value) { this->maxReapter = value; }
+		void SetNonReapter(int value) { this->nonRepeater = value; }
+		int GetMaxReapter() { return maxReapter; }
+		int GetNonReapter() { return nonRepeater; }
+
+		static void * Run(void * data);
+	};
+
+	class SnmpWalkRequest : public SnmpGetRequestBase {
+	public:
+		SnmpWalkRequest(int requestId, Host& host, RequestManager * manager) :
+			SnmpGetRequestBase(requestId, SnmpType::SNMP_WALK, host, manager) {}
+
+		virtual ~SnmpWalkRequest() {}
+
+		static void * Run(void * data);
 	};
 }
 

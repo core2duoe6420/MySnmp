@@ -1,9 +1,7 @@
 #ifndef __OID_TREE_H
 #define __OID_TREE_H
 
-#include <libsnmp.h>
-#include <snmp_pp/snmp_pp.h>
-
+#include <snmp_pp/oid.h>
 #include <xercesc/util/Xerces_autoconf_config.hpp>
 
 namespace xercesc_3_1 {

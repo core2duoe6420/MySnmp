@@ -11,10 +11,13 @@ SnmpRequestCommand::SnmpRequestCommand(SnmpType type, int hostId) : type(type) {
 	if (!host)
 		return;
 	switch (this->type) {
-	case SnmpType::get:
-		request = RequestManager::GetManager().CreateSnmpGetRequest(*host);
+	case SnmpType::SNMP_GET:
+	case SnmpType::SNMP_GETNEXT:
+	case SnmpType::SNMP_GETBULK:
+	case SnmpType::SNMP_WALK:
+		request = RequestManager::GetManager().CreateSnmpGetRequest(*host, this->type);
 		break;
-	case SnmpType::set:
+	case SnmpType::SNMP_SET:
 		request = RequestManager::GetManager().CreateSnmpSetRequest(*host);
 		break;
 	default:
@@ -23,30 +26,32 @@ SnmpRequestCommand::SnmpRequestCommand(SnmpType type, int hostId) : type(type) {
 }
 
 void SnmpRequestCommand::SetBulkNonRepeater(int value) {
-	if (!host || type != SnmpType::get)
+	if (!host || type != SnmpType::SNMP_GETBULK)
 		return;
-	SnmpGetRequest * getRequest = dynamic_cast<SnmpGetRequest *>(request);
-	getRequest->GetConfig().SetBulkNonRepeater(value);
+	SnmpGetBulkRequest * bulkRequest = dynamic_cast<SnmpGetBulkRequest *>(request);
+	bulkRequest->SetNonReapter(value);
 }
 
 void SnmpRequestCommand::SetBulkMaxRepeater(int value) {
-	if (!host || type != SnmpType::get)
+	if (!host || type != SnmpType::SNMP_GETBULK)
 		return;
-	SnmpGetRequest * getRequest = dynamic_cast<SnmpGetRequest *>(request);
-	getRequest->GetConfig().SetBulkMaxRepeater(value);
+	SnmpGetBulkRequest * bulkRequest = dynamic_cast<SnmpGetBulkRequest *>(request);
+	bulkRequest->SetMaxReapter(value);
 }
 
 void SnmpRequestCommand::AddOid(const char * oidstr) {
-	if (!host || type != SnmpType::get)
+	if (!host || (type != SnmpType::SNMP_GET &&
+		type != SnmpType::SNMP_GETNEXT &&
+		type != SnmpType::SNMP_GETBULK &&
+		type != SnmpType::SNMP_WALK))
 		return;
 
-	SnmpGetRequest * getRequest = dynamic_cast<SnmpGetRequest *>(request);
+	SnmpGetRequestBase * getRequest = dynamic_cast<SnmpGetRequestBase *>(request);
 	getRequest->AddOid(oidstr);
-
 }
 
 void SnmpRequestCommand::AddVb(const char * oidstr, const wxString& value) {
-	if (!host || type != SnmpType::set)
+	if (!host || type != SnmpType::SNMP_SET)
 		return;
 
 	SnmpSetRequest * setRequest = dynamic_cast<SnmpSetRequest *>(request);

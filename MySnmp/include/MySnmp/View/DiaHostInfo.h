@@ -1,7 +1,11 @@
 #ifndef __DIAADDHOST_H
 #define __DIAADDHOST_H
 
-#include <wx/wx.h>
+#include <wx/window.h>
+#include <wx/dialog.h>
+#include <wx/textctrl.h>
+#include <wx/combobox.h>
+
 
 namespace mysnmp {
 

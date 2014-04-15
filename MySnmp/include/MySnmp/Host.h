@@ -1,8 +1,7 @@
 #ifndef __HOST_H
 #define __HOST_H
 
-#include <libsnmp.h>
-#include <snmp_pp/snmp_pp.h>
+#include <snmp_pp/vb.h>
 
 #include <MySnmp/SafeType.h>
 #include <MySnmp/HostConfig.h>
@@ -73,12 +72,11 @@ namespace mysnmp {
 		/* @return:同AddOidValue(const Snmp_pp::Vb * vb) */
 		bool AddOidValue(const char * oid, const char * value, int lastSnmpErrStatus, int lastPduErrStatus);
 
-		VbExtended * GetOidValue(const char * oid) const {
-			VbExtended ** retval = NULL;
-			if ((retval = this->oidValues.Find(oid)) == NULL)
-				return NULL;
-			return *retval;
-		}
+		VbExtended * GetOidValue(const char * oid) const;
+		/* 返回的vector是使用new在堆上创建的，调用者需要负责delete
+		 * vector中的VbExtented*不要释放
+		 */
+		std::vector<VbExtended *> * GetOidSubtree(const char * oidstr) const;
 
 		/* @return:找到值并删除返回true，无此值返回false */
 		bool RemoveOidValue(const Snmp_pp::Vb& vb) {
@@ -102,7 +100,7 @@ namespace mysnmp {
 		void Lock() { lock.Enter(); }
 		void UnLock() { lock.Exit(); }
 
-		bool GetReferenceCount() { return referenceCount; }
+		int GetReferenceCount() { return referenceCount; }
 		bool GetDelFlag() { return delFlag; }
 		void SetDelFlag(bool value) { this->delFlag = value; }
 		int GetId() const { return hostid; }

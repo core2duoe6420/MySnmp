@@ -2,7 +2,9 @@
 #define __HOST_COMMAND_H
 
 #include <wx/string.h>
+#include <vector>
 #include <MySnmp/Command/Command.h>
+#include <snmp_pp/vb.h>
 
 namespace mysnmp {
 	class Host;
@@ -56,6 +58,20 @@ namespace mysnmp {
 		GetHostInfo_VBERR = -4,
 		GetHostInfo_NOHOST = -5,
 		GetHostInfo_NOOID = -6,
+	};
+
+	class GetOidSubtreeCommand : public Command {
+	private:
+		int hostid;
+		const char * oidstr;
+		std::vector<Snmp_pp::Vb> results;
+
+	public:
+		GetOidSubtreeCommand(int hostid) : hostid(hostid), oidstr(NULL) {}
+		virtual int Execute();
+
+		const std::vector<Snmp_pp::Vb>& GetResults() const { return results; }
+		void SetOid(const char * oidstr) { this->oidstr = oidstr; }
 	};
 
 	class GetHostOidCommand : public Command {

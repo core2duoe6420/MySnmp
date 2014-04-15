@@ -1,7 +1,8 @@
 #ifndef __FRMMAIN_H
 #define __FRMMAIN_H
 
-#include <wx/wx.h>
+#include <wx/frame.h>
+#include <wx/toolbar.h>
 
 namespace mysnmp {
 	class TopoCanvas;

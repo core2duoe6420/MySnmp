@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_LIB;HAVE_CONFIG_H;WXUSINGDLL;wxMSVC_VERSION_AUTO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_LIB;HAVE_CONFIG_H;WXUSINGDLL;wxMSVC_VERSION_AUTO;_WINSOCKAPI_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>E:\Document\C++\lib\wxMSW\include\msvc;E:\Document\C++\lib\wxMSW\include;E:\Document\C++\MySnmp\MySnmp\include;E:\Document\C++\lib\pthreads-w32-2-9-1-release\include;E:\Document\C++\lib\xerces-c-3.1.1\src;E:\Document\C++\lib\snmp++\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -92,7 +92,6 @@
     <ClInclude Include="include\MySnmp\RequestManager.h" />
     <ClInclude Include="include\MySnmp\Semaphore.h" />
     <ClInclude Include="include\MySnmp\SnmpRequest.h" />
-    <ClInclude Include="include\MySnmp\SnmpRequestConfig.h" />
     <ClInclude Include="include\MySnmp\SnmpResult.h" />
     <ClInclude Include="include\MySnmp\Thread.h" />
     <ClInclude Include="include\MySnmp\Lock.h" />

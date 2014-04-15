@@ -9,12 +9,12 @@
 using namespace mysnmp;
 using namespace Snmp_pp;
 
-bool SnmpGetRequest::AddOid(const char * oidstr) {
+bool SnmpGetRequestBase::AddOid(const char * oidstr) {
 	Oid oid(oidstr);
 	return AddOid(oid);
 }
 
-bool SnmpGetRequest::AddOid(const Snmp_pp::Oid& oid) {
+bool SnmpGetRequestBase::AddOid(const Snmp_pp::Oid& oid) {
 	const OidNode * node = host.GetOidTree().GetOidNode(oid);
 	if (node == NULL) {
 		this->errMsg = "no such oid";
@@ -24,64 +24,14 @@ bool SnmpGetRequest::AddOid(const Snmp_pp::Oid& oid) {
 	return true;
 }
 
-bool SnmpGetRequest::AddOid(const OidNode * oid) {
-	switch (oid->GetType()) {
-	case OidTypeEnum::TYPE_NODE:
-	case OidTypeEnum::TYPE_SCALAR:
-		this->getNextVector.push_back(oid->ToOid());
-		break;
-	case OidTypeEnum::TYPE_TABLE:
-	case OidTypeEnum::TYPE_ENTRY:
-	case OidTypeEnum::TYPE_COLUMN:
-		this->getBulkVector.push_back(oid->ToOid());
-		break;
-	case OidTypeEnum::TYPE_VALUE:
-		this->getVector.push_back(oid->ToOid());
-		break;
-	}
-	this->oidTotalCount++;
+bool SnmpGetRequestBase::AddOid(const OidNode * oid) {
+	this->oids.push_back(oid->ToOid());
 	return true;
 }
 
-void * SnmpGetRequest::Run(void * data) {
-	RequestHolder * holder = (RequestHolder *)data;
-	SnmpGetRequest * request = dynamic_cast<SnmpGetRequest *>(holder->GetSnmpRequest());
-	RequestManager * manager = request->manager;
-	SnmpResult * result = holder->GetSnmpResult();
-
-	if (request->oidTotalCount == 0)
-		result->SetErrMsg("Oid list is empty");
-
-	if (result->GetErrMsg() == NULL) {
-		request->host.Lock();
-		CTarget target(request->host.GetAddress());
-		target.set_retry(request->host.GetConfig().GetRetryTimes());
-		target.set_timeout(request->host.GetConfig().GetTimeout());
-		target.set_readcommunity(request->host.GetConfig().GetReadCommunity());
-		target.set_writecommunity(request->host.GetConfig().GetWriteCommunity());
-		target.set_version(request->host.GetConfig().GetSnmpVersion());
-		request->host.UnLock();
-
-		int status;
-		Snmp snmp(status);
-
-		if (status != SNMP_CLASS_SUCCESS)
-			result->SetErrMsg((char *)snmp.error_msg(status));
-
-		if (result->GetErrMsg() == NULL) {
-			Pdu pdu;
-			request->handleVector(request->getVector, snmp, target, pdu, result);
-			request->handleVector(request->getNextVector, snmp, target, pdu, result);
-			request->handleVector(request->getBulkVector, snmp, target, pdu, result);
-		}
-	}
-
-	manager->AddResultToQueue(holder);
-	return NULL;
-}
-
-void SnmpGetRequest::handleVector(std::vector<Oid>& vector,
-								  Snmp& snmp, SnmpTarget& target, Pdu& pdu, SnmpResult * result) {
+static void handleVector(std::vector<Oid>& vector, Snmp& snmp,
+						 SnmpTarget& target, Pdu& pdu,
+						 SnmpRequest * request, SnmpResult * result) {
 	pdu.clear();
 	int len = vector.size();
 	if (len == 0)
@@ -94,14 +44,19 @@ void SnmpGetRequest::handleVector(std::vector<Oid>& vector,
 
 	int snmpErrStatus = 0, pduErrStatus = 0, pduErrIndex = -1;
 
-	if (vector == this->getVector)
+	switch (request->GetType()) {
+	case SNMP_GET:
 		snmpErrStatus = snmp.get(pdu, target);
-	else if (vector == this->getNextVector)
+		break;
+	case SNMP_GETNEXT:
 		snmpErrStatus = snmp.get_next(pdu, target);
-	else if (vector == this->getBulkVector) {
-		int nonRepeater = this->config.GetBulkNonRepeater();
-		int maxRepeater = this->config.GetBulkMaxRepeater();
+		break;
+	case SNMP_GETBULK:
+		SnmpGetBulkRequest * bulkRequest = dynamic_cast<SnmpGetBulkRequest *>(request);
+		int nonRepeater = bulkRequest->GetNonReapter();
+		int maxRepeater = bulkRequest->GetMaxReapter();
 		snmpErrStatus = snmp.get_bulk(pdu, target, nonRepeater, maxRepeater);
+		break;
 	}
 	delete[] vblist;
 
@@ -123,4 +78,111 @@ void SnmpGetRequest::handleVector(std::vector<Oid>& vector,
 	}
 	delete[] resultVb;
 
+}
+
+static void * GetRequestRunBase(void * data) {
+	RequestHolder * holder = (RequestHolder *)data;
+	SnmpGetRequestBase * request = dynamic_cast<SnmpGetRequestBase *>(holder->GetSnmpRequest());
+	RequestManager * manager = request->GetManager();
+	SnmpResult * result = holder->GetSnmpResult();
+
+	if (request->GetOids().size() == 0)
+		result->SetErrMsg("Oid list is empty");
+
+	if (result->GetErrMsg() == NULL) {
+		Host& host = request->GetHost();
+		host.Lock();
+		CTarget target(host.GetAddress());
+		target.set_retry(host.GetConfig().GetRetryTimes());
+		target.set_timeout(host.GetConfig().GetTimeout());
+		target.set_readcommunity(host.GetConfig().GetReadCommunity());
+		target.set_writecommunity(host.GetConfig().GetWriteCommunity());
+		target.set_version(host.GetConfig().GetSnmpVersion());
+		host.UnLock();
+
+		int status;
+		Snmp snmp(status);
+
+		if (status != SNMP_CLASS_SUCCESS)
+			result->SetErrMsg((char *)snmp.error_msg(status));
+
+		if (result->GetErrMsg() == NULL) {
+			Pdu pdu;
+			handleVector(request->GetOids(), snmp, target, pdu, request, result);
+		}
+	}
+
+	manager->AddResultToQueue(holder);
+	return NULL;
+}
+
+void * SnmpGetRequest::Run(void * data) {
+	return GetRequestRunBase(data);
+}
+
+void * SnmpGetNextRequest::Run(void * data) {
+	return GetRequestRunBase(data);
+}
+
+void * SnmpGetBulkRequest::Run(void * data) {
+	return GetRequestRunBase(data);
+}
+
+/* 这段有大量重复代码 */
+void * SnmpWalkRequest::Run(void * data) {
+	RequestHolder * holder = (RequestHolder *)data;
+	SnmpWalkRequest * request = dynamic_cast<SnmpWalkRequest *>(holder->GetSnmpRequest());
+	RequestManager * manager = request->GetManager();
+	SnmpResult * result = holder->GetSnmpResult();
+
+	if (request->GetOids().size() == 0)
+		result->SetErrMsg("Oid list is empty");
+
+	if (result->GetErrMsg() == NULL) {
+		Host& host = request->GetHost();
+		host.Lock();
+		CTarget target(host.GetAddress());
+		target.set_retry(host.GetConfig().GetRetryTimes());
+		target.set_timeout(host.GetConfig().GetTimeout());
+		target.set_readcommunity(host.GetConfig().GetReadCommunity());
+		target.set_writecommunity(host.GetConfig().GetWriteCommunity());
+		target.set_version(host.GetConfig().GetSnmpVersion());
+		host.UnLock();
+
+		int status;
+		Snmp snmp(status);
+
+		if (status != SNMP_CLASS_SUCCESS)
+			result->SetErrMsg((char *)snmp.error_msg(status));
+
+		if (result->GetErrMsg() == NULL) {
+			Oid oid = request->GetOids()[0];
+			Pdu pdu;
+			Vb vb(oid);
+			pdu.set_vb(vb, 0);
+			int snmpErrStatus = 0;
+			while ((snmpErrStatus = snmp.get_bulk(pdu, target, 0, 10)) == SNMP_CLASS_SUCCESS) {
+				bool end = false;
+				for (int i = 0; i < pdu.get_vb_count(); i++) {
+					pdu.get_vb(vb, i);
+					Oid tmp;
+					vb.get_oid(tmp);
+					if (oid.nCompare(oid.len(), tmp) != 0) {
+						end = true;
+						break;
+					}
+					if (vb.get_syntax() != sNMP_SYNTAX_ENDOFMIBVIEW) {
+						result->AddVb(vb);
+						result->AddSnmpErrStatus(snmpErrStatus);
+						result->AddPduErrStatus(0);
+					}
+				}
+				if (end)
+					break;
+				pdu.set_vblist(&vb, 1);
+			}
+		}
+	}
+	manager->AddResultToQueue(holder);
+	return NULL;
 }

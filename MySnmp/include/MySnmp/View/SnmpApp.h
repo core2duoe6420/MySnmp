@@ -2,6 +2,7 @@
 #define __SNMP_APP_H
 
 #include <MySnmp/View/FrmMain.h>
+#include <wx/app.h>
 
 namespace mysnmp {
 

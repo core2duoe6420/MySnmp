@@ -5,6 +5,8 @@
 #include <MySnmp/View/DiaHostInfo.h>
 #include <MySnmp/Command/HostCommand.h>
 
+#include <wx/wx.h>
+
 #include <MySnmp/debug.h>
 
 using namespace mysnmp;
