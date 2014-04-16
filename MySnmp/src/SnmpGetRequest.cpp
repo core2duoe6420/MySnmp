@@ -111,7 +111,7 @@ static void * GetRequestRunBase(void * data) {
 			handleVector(request->GetOids(), snmp, target, pdu, request, result);
 		}
 	}
-
+	holder->SetComplete();
 	manager->AddResultToQueue(holder);
 	return NULL;
 }
@@ -163,6 +163,7 @@ void * SnmpWalkRequest::Run(void * data) {
 			int snmpErrStatus = 0;
 			while ((snmpErrStatus = snmp.get_bulk(pdu, target, 0, 10)) == SNMP_CLASS_SUCCESS) {
 				bool end = false;
+				result->ClearVb();
 				for (int i = 0; i < pdu.get_vb_count(); i++) {
 					pdu.get_vb(vb, i);
 					Oid tmp;
@@ -172,17 +173,21 @@ void * SnmpWalkRequest::Run(void * data) {
 						break;
 					}
 					if (vb.get_syntax() != sNMP_SYNTAX_ENDOFMIBVIEW) {
+						result->Lock();
 						result->AddVb(vb);
 						result->AddSnmpErrStatus(snmpErrStatus);
 						result->AddPduErrStatus(0);
+						result->UnLock();
 					}
 				}
 				if (end)
 					break;
 				pdu.set_vblist(&vb, 1);
+				manager->AddResultToQueue(holder);
 			}
 		}
 	}
+	holder->SetComplete();
 	manager->AddResultToQueue(holder);
 	return NULL;
 }

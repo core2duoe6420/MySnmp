@@ -15,11 +15,17 @@ namespace mysnmp {
 	class RequestHolder {
 		friend class RequestManager;
 	private:
+		/* 有时候一个请求会需要很长时间，例如walk一个子树
+		 * 此时让每抵达几个结果就放到Result队列中
+		 * 由isComplete判断请求是否结束需要清理对象
+		 */
+		bool isComplete;
 		SnmpRequest * request;
 		SnmpResult * result;
 		Thread * thread;
 
-		RequestHolder(SnmpType type, int requestId, Host& host, RequestManager * manager) {
+		RequestHolder(SnmpType type, int requestId, Host& host, RequestManager * manager) :
+			isComplete(false) {
 			switch (type) {
 			case SnmpType::SNMP_GET:
 				request = new SnmpGetRequest(requestId, host, manager);
@@ -42,7 +48,7 @@ namespace mysnmp {
 				thread = new Thread(SnmpSetRequest::Run);
 				break;
 			}
-			result = new SnmpResult(type, host, requestId);
+			result = new SnmpResult(type, host, requestId, new SpinLock());
 
 		}
 
@@ -64,6 +70,8 @@ namespace mysnmp {
 		SnmpResult * GetSnmpResult() const { return result; }
 		Thread * GetThread() const { return thread; }
 		SnmpRequest * GetSnmpRequest() const { return request; }
+		bool IsComplete() { return isComplete; }
+		void SetComplete() { this->isComplete = true; }
 	};
 
 	/* 有两个工作线程，两个队列

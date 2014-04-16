@@ -11,11 +11,13 @@
 namespace mysnmp {
 	class FrmInterface : public wxFrame {
 	private:
+		int lastRequestId;
 		InterfaceModule * module;
 		TopoHost * chosenHost;
 
 		wxListCtrl * iflist;
 		wxButton * btnRefresh;
+		wxButton * btnResend;
 		wxButton * btnClose;
 		wxTimer * timer;
 
@@ -26,6 +28,7 @@ namespace mysnmp {
 		void updateListCtrl();
 		void eventInitialize();
 
+		void OnResendClick(wxCommandEvent& event);
 		void OnCloseClick(wxCommandEvent& event);
 		void OnRefreshClick(wxCommandEvent& event);
 		void OnTimer(wxTimerEvent& event);
@@ -71,6 +74,8 @@ module(module) {
 
 	btnRefresh = new wxButton(this, wxID_ANY, L"刷新");
 	buttonSizer->Add(btnRefresh, 0, wxALL, 10);
+	btnResend = new wxButton(this, wxID_ANY, L"重发");
+	buttonSizer->Add(btnResend, 0, wxALL, 10);
 	btnClose = new wxButton(this, wxID_CANCEL, L"关闭");
 	buttonSizer->Add(btnClose, 0, wxALL, 10);
 
@@ -82,7 +87,7 @@ module(module) {
 	}
 
 	timer = new wxTimer(this, wxID_ANY);
-	timer->Start(1000);
+	timer->Start(2000);
 	this->SetSizer(topSizer);
 	btnRefresh->SetDefault();
 	this->eventInitialize();
@@ -133,6 +138,10 @@ void FrmInterface::OnCloseClick(wxCommandEvent& event) {
 }
 
 void FrmInterface::OnRefreshClick(wxCommandEvent& event) {
+	this->updateListCtrl();
+}
+
+void FrmInterface::OnResendClick(wxCommandEvent& event) {
 	this->sendInterfaceRequest();
 }
 
@@ -149,6 +158,7 @@ void FrmInterface::OnClose(wxCloseEvent& event) {
 void FrmInterface::eventInitialize() {
 	this->Bind(wxEVT_BUTTON, &FrmInterface::OnCloseClick, this, btnClose->GetId());
 	this->Bind(wxEVT_BUTTON, &FrmInterface::OnRefreshClick, this, btnRefresh->GetId());
+	this->Bind(wxEVT_BUTTON, &FrmInterface::OnResendClick, this, btnResend->GetId());
 	this->Bind(wxEVT_TIMER, &FrmInterface::OnTimer, this, timer->GetId());
 	this->Bind(wxEVT_CLOSE_WINDOW, &FrmInterface::OnClose, this);
 	this->Bind(wxEVT_LIST_ITEM_ACTIVATED, &FrmInterface::OnListDoubleClick, this, iflist->GetId());
@@ -181,23 +191,39 @@ int FrmInterface::getIfNumber() {
 }
 
 void FrmInterface::sendInterfaceRequest() {
-	SnmpRequestCommand command(SnmpType::SNMP_GETBULK, chosenHost->GetHostId());
+	SnmpRequestCommand command(SnmpType::SNMP_WALK, chosenHost->GetHostId());
 	const char * oidstr = "1.3.6.1.2.1.2.2.1";
 	command.AddOid(oidstr);
-	command.SetBulkNonRepeater(0);
-	command.SetBulkMaxRepeater(22 * ifNumber);
-	command.Execute();
+	//command.SetBulkNonRepeater(0);
+	//command.SetBulkMaxRepeater(22 * ifNumber);
+	lastRequestId = command.Execute();
 }
 
 void FrmInterface::updateListCtrl() {
 	GetHostOidCommand command(chosenHost->GetHostId());
 	const char * oidpre = "1.3.6.1.2.1.2.2.1";
+	/* 有的代理接口索引不是从1开始的，而是自己设定的值
+	 * 所以先拿到索引值
+	 */
+	const char * indexTree = "1.3.6.1.2.1.2.2.1.1";
+	GetOidSubtreeCommand indexCommand(chosenHost->GetHostId(), lastRequestId);
+	indexCommand.SetOid(oidpre);
+	const std::vector<Snmp_pp::Vb>& vbs = indexCommand.GetResults();
+	std::vector<int> indics;
+	for (int i = 0; i < ifNumber; i++) {
+		/* 先设置一个值，防止vbs可能为空 */
+		indics.push_back(i + 1);
+		if (vbs.size() > i) {
+			Snmp_pp::Oid oid = vbs[i].get_oid();
+			indics[i] = oid[oid.len() - 1];
+		}
+	}
 
 	wxString oidstr;
 	for (int i = 0; i < ifNumber; i++) {
 		for (int j = 0; j < module->GetColumnCollection()->GetColumnCount(); j++) {
 			const ColumnInfo * column = module->GetColumnCollection()->GetColumn(j);
-			oidstr.Printf("%s.%d.%d", oidpre, j + 1, i + 1);
+			oidstr.Printf("%s.%d.%d", oidpre, j + 1, indics[i]);
 			command.SetOid(oidstr);
 			int err = command.Execute();
 			wxString value;
@@ -216,7 +242,8 @@ void FrmInterface::updateListCtrl() {
 					value.Printf("%dMbps", v);
 				}
 			}
-			iflist->SetItem(i, j, value);
+			if (iflist->GetItemText(i, j) != value)
+				iflist->SetItem(i, j, value);
 		}
 	}
 }

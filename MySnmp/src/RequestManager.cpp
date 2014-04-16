@@ -61,9 +61,13 @@ void * RequestManager::resultQueueHandler(void * data) {
 		if (manager->resultHandler)
 			manager->resultHandler(holder->result);
 
+		//请求没有完成不删除holder对象
+		if (holder->IsComplete() == false)
+			continue;
+
 		manager->sem_running.Post();
 
-		Host& host = holder->GetSnmpResult()->GetHost();
+		Host& host = holder->result->GetHost();
 		manager->clearRequestHolder(holder->result->GetRequestId());
 
 		/* 有两处删除Host对象的地方，这里是一处

@@ -18,6 +18,7 @@ namespace mysnmp {
 
 		wxListCtrl * arptable;
 		wxButton * btnRefresh;
+		wxButton * btnResend;
 		wxButton * btnClose;
 		wxTimer * timer;
 
@@ -25,6 +26,7 @@ namespace mysnmp {
 		void updateListCtrl();
 		void eventInitialize();
 
+		void OnResendClick(wxCommandEvent& event);
 		void OnCloseClick(wxCommandEvent& event);
 		void OnRefreshClick(wxCommandEvent& event);
 		void OnTimer(wxTimerEvent& event);
@@ -61,6 +63,8 @@ module(module) {
 
 	btnRefresh = new wxButton(this, wxID_ANY, L"刷新");
 	buttonSizer->Add(btnRefresh, 0, wxALL, 10);
+	btnResend = new wxButton(this, wxID_ANY, L"重发");
+	buttonSizer->Add(btnResend, 0, wxALL, 10);
 	btnClose = new wxButton(this, wxID_CANCEL, L"关闭");
 	buttonSizer->Add(btnClose, 0, wxALL, 10);
 
@@ -74,7 +78,7 @@ module(module) {
 	updateListCtrl();
 
 	timer = new wxTimer(this, wxID_ANY);
-	timer->Start(1000);
+	timer->Start(2000);
 	this->SetSizer(topSizer);
 	btnRefresh->SetDefault();
 	this->eventInitialize();
@@ -84,8 +88,13 @@ void FrmARPTable::OnCloseClick(wxCommandEvent& event) {
 	this->Close();
 }
 
-void FrmARPTable::OnRefreshClick(wxCommandEvent& event) {
+void FrmARPTable::OnResendClick(wxCommandEvent& event) {
 	this->sendARPTableRequest();
+}
+
+
+void FrmARPTable::OnRefreshClick(wxCommandEvent& event) {
+	this->updateListCtrl();
 }
 
 void FrmARPTable::OnTimer(wxTimerEvent& event) {
@@ -101,6 +110,7 @@ void FrmARPTable::OnClose(wxCloseEvent& event) {
 void FrmARPTable::eventInitialize() {
 	this->Bind(wxEVT_BUTTON, &FrmARPTable::OnCloseClick, this, btnClose->GetId());
 	this->Bind(wxEVT_BUTTON, &FrmARPTable::OnRefreshClick, this, btnRefresh->GetId());
+	this->Bind(wxEVT_BUTTON, &FrmARPTable::OnResendClick, this, btnResend->GetId());
 	this->Bind(wxEVT_TIMER, &FrmARPTable::OnTimer, this, timer->GetId());
 	this->Bind(wxEVT_CLOSE_WINDOW, &FrmARPTable::OnClose, this);
 }
@@ -112,16 +122,27 @@ void FrmARPTable::sendARPTableRequest() {
 }
 
 void FrmARPTable::updateListCtrl() {
-	arptable->DeleteAllItems();
 	GetOidSubtreeCommand command(chosenHost->GetHostId(), lastRequestId);
 	command.SetOid("1.3.6.1.2.1.3.1.1");
 	command.Execute();
 	const std::vector<Snmp_pp::Vb>& vbs = command.GetResults();
 
 	int rows = vbs.size() / 3;
+	/* 行数与原有行数不符，先全部删除再添加 */
+	if (rows != arptable->GetItemCount()) {
+		arptable->DeleteAllItems();
+		for (int i = 0; i < rows; i++)
+			arptable->InsertItem(i, "");
+	}
+
 	for (int i = 0; i < rows; i++) {
-		arptable->InsertItem(i, vbs[i].get_printable_value());
-		arptable->SetItem(i, 1, wxString(vbs[i + rows].get_printable_value()).Mid(0, 19));
-		arptable->SetItem(i, 2, vbs[i + rows * 2].get_printable_value());
+		for (int j = 0; j < 3; j++) {
+			wxString value = vbs[i + rows*j].get_printable_value();
+			/* MAC地址需要修正字符串，应该是SNMP++的bug */
+			if (j == 1)
+				value = value.Mid(0, 19);
+			if (arptable->GetItemText(i, j) != value)
+				arptable->SetItem(i, j, value);
+		}
 	}
 }

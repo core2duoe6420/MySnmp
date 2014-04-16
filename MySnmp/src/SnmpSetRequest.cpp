@@ -127,7 +127,7 @@ void * SnmpSetRequest::Run(void * data) {
 			delete[] resultVb;
 		}
 	}
-
+	holder->SetComplete();
 	manager->AddResultToQueue(holder);
 	return NULL;
 }
