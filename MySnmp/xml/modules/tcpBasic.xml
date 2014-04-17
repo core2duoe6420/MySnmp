@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tcpBasic>
+	<column name="TCP重传算法" size="0">
+		<map key="1" value="other" />
+		<map key="2" value="constant" />
+		<map key="3" value="rsre" />
+		<map key="4" value="vanj" />
+	</column>
+	<column name="重传超时最小值" size="0"></column>
+	<column name="重传超时最大值" size="0"></column>
+	<column name="TCP最大连接数" size="0"></column>
+	<column name="发起的连接数" size="0"></column>
+	<column name="接受的连接数" size="0"></column>
+	<column name="尝试失败的连接数" size="0"></column>
+	<column name="连接重置数" size="0"></column>
+	<column name="活跃的连接数" size="0"></column>
+	<column name="接受的分段数" size="0"></column>
+	<column name="发送的分段数" size="0"></column>
+	<column name="重传的分段数" size="0"></column>
+</tcpBasic>

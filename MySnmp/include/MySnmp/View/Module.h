@@ -180,6 +180,13 @@ namespace mysnmp {
 		virtual void OnMenuItemClick(wxCommandEvent& event);
 	};
 
+	class TcpBasicModule : public TableModule {
+	public:
+		TcpBasicModule(const wxString& menuLabel) :
+			TableModule("xml/modules/tcpBasic.xml", menuLabel) {}
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
 }
 
 #endif

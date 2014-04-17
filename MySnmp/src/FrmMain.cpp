@@ -85,6 +85,8 @@ void FrmMain::modulesInitialize() {
 	ModuleManager::RegisterModule(ipRouteTableModule);
 	IpTransTableModule * ipTransTableModule = new IpTransTableModule(L"IP转换表");
 	ModuleManager::RegisterModule(ipTransTableModule);
+	TcpBasicModule * tcpBasicModule = new TcpBasicModule(L"TCP统计数据");
+	ModuleManager::RegisterModule(tcpBasicModule);
 	TcpConnTableModule * tcpConnTableModule = new TcpConnTableModule(L"TCP连接表");
 	ModuleManager::RegisterModule(tcpConnTableModule);
 	ModifyHostModule * modifyInfoModule = new ModifyHostModule(L"编辑主机");
@@ -108,9 +110,7 @@ void FrmMain::OnAddHostClick(wxCommandEvent& event) {
 		this->canvas->DrawBitmap(hostId, wxBitmap("image/Host.png", wxBITMAP_TYPE_PNG),
 								 wxPoint(50, 50), diaHostInfo->GetIpAddress(), diaHostInfo->GetName());
 	}
-
 	diaHostInfo->Destroy();
-
 }
 
 void FrmMain::OnMenuExitClick(wxCommandEvent& event) {
