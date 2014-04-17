@@ -10,7 +10,7 @@ namespace mysnmp {
 
 	class SnmpResult {
 	private:
-		Lock * lock;
+		mysnmp::Lock * lock;
 		SnmpType type;
 		Host& host;
 		std::vector<Snmp_pp::Vb> vblist;

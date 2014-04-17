@@ -147,6 +147,17 @@ namespace mysnmp {
 
 		virtual void OnMenuItemClick(wxCommandEvent& event);
 	};
+
+	class IpRouteTableModule : public Module {
+	private:
+		XMLColumnCollection * columnInfos;
+	public:
+		IpRouteTableModule(const wxString& menuLabel);
+		~IpRouteTableModule();
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+		XMLColumnCollection * GetColumnCollection() const { return columnInfos; }
+	};
+
 }
 
 #endif

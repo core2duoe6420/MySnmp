@@ -70,6 +70,102 @@
 									</node>
 								</node>
 							</node>
+							<node index="4" name="ip" desc="" type="node">
+								<node index="1" name="ipForwarding" desc="" type="scalar" access="read_write" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="2" name="ipDefaultTTL" desc="" type="scalar" access="read_write" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="3" name="ipInReceives" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="4" name="ipInHdrErrors" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="5" name="ipInAddrErrors" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="6" name="ipForwDatagrams" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="7" name="ipInUnknownProtos" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="8" name="ipInDiscards" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="9" name="ipInDelivers" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="10" name="ipOutRequests" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="11" name="ipOutDiscards" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="12" name="ipOutNoRoutes" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="13" name="ipReasmTimeout" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="14" name="ipReasmReqds" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="15" name="ipReasmOKs" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="16" name="ipReasmFails" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="17" name="ipFragOKs" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="18" name="ipFragFails" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="19" name="ipFragCreates" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="20" name="ipAddrTable" desc="" type="table" access="not-accessible" status="mandotory" syntax="sequence">
+									<node index="1" name="ipAddrEntry" desc="" type="entry" access="not-accessible" status="mandotory" syntax="entry">
+										<node index="1" name="ipAdEntAddr" desc="" type="column" access="read_only" status="mandotory" syntax="ipaddress" />
+										<node index="2" name="ipAdEntIfIndex" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
+										<node index="3" name="ipAdEntNetMask" desc="" type="column" access="read_only" status="mandotory" syntax="ipaddress" />
+										<node index="4" name="ipAdEntBcastAddr" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
+										<node index="5" name="ipAdEntReasmMaxSize" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
+									</node>
+								</node>
+								<node index="21" name="ipRouteTable" desc="" type="table" access="not-accessible" status="mandotory" syntax="sequence">
+									<node index="1" name="ipRouteEntry" desc="" type="entry" access="not-accessible" status="mandotory" syntax="entry">
+										<node index="1" name="ipRouteDest" desc="" type="column" access="read_write" status="mandotory" syntax="ipaddress" />
+										<node index="2" name="ipRouteIfIndex" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="3" name="ipRouteMetric1" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="4" name="ipRouteMetric2" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="5" name="ipRouteMetric3" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="6" name="ipRouteMetric4" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="7" name="ipRouteNextHop" desc="" type="column" access="read_write" status="mandotory" syntax="ipaddress" />
+										<node index="8" name="ipRouteType" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="9" name="ipRouteProto" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
+										<node index="10" name="ipRouteAge" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="11" name="ipRouteMask" desc="" type="column" access="read_write" status="mandotory" syntax="ipaddress" />
+										<node index="12" name="ipRouteMetric5" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="13" name="ipRouteInfo" desc="" type="column" access="read_only" status="mandotory" syntax="oid" />
+									</node>
+								</node>
+								<node index="22" name="ipNetToMediaTable" desc="" type="table" access="not-accessible" status="mandotory" syntax="sequence">
+									<node index="1" name="ipNetToMediaEntry" desc="" type="entry" access="not-accessible" status="mandotory" syntax="entry">
+										<node index="1" name="ipNetToMediaIfIndex" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+										<node index="2" name="ipNetToMediaPhysAddress" desc="" type="column" access="read_write" status="mandotory" syntax="string" />
+										<node index="3" name="ipNetToMediaNetAddress" desc="" type="column" access="read_write" status="mandotory" syntax="ipaddress" />
+										<node index="4" name="ipNetToMediaType" desc="" type="column" access="read_write" status="mandotory" syntax="integer" />
+									</node>
+								</node>
+								<node index="23" name="ipRoutingDiscards" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+							</node>
 						</node>
 					</node>
 				</node>

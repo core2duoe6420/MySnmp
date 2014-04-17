@@ -97,6 +97,7 @@
     <ClInclude Include="include\MySnmp\Lock.h" />
     <ClInclude Include="include\MySnmp\SafeType.h" />
     <ClInclude Include="include\MySnmp\View\DiaHostInfo.h" />
+    <ClInclude Include="include\MySnmp\View\FrmListCtrlBase.h" />
     <ClInclude Include="include\MySnmp\View\FrmMain.h" />
     <ClInclude Include="include\MySnmp\View\SnmpApp.h" />
     <ClInclude Include="include\MySnmp\View\TopoCanvas.h" />
@@ -106,10 +107,12 @@
     <ClCompile Include="src\ARPTableModule.cpp" />
     <ClCompile Include="src\DeleteHostModule.cpp" />
     <ClCompile Include="src\DiaHostInfo.cpp" />
+    <ClCompile Include="src\FrmListCtrlBase.cpp" />
     <ClCompile Include="src\HostCommand.cpp" />
     <ClCompile Include="src\HostInfoModule.cpp" />
     <ClCompile Include="src\HostManager.cpp" />
     <ClCompile Include="src\InterfaceModule.cpp" />
+    <ClCompile Include="src\IpRouteTableModulecpp.cpp" />
     <ClCompile Include="src\ModifyHostModule.cpp" />
     <ClCompile Include="src\Module.cpp" />
     <ClCompile Include="src\SnmpApp.cpp" />

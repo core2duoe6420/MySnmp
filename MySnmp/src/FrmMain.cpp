@@ -79,6 +79,8 @@ void FrmMain::modulesInitialize() {
 	ModuleManager::RegisterModule(interfaceModule);
 	ARPTableModule * arpTableModule = new ARPTableModule(L"ARP表");
 	ModuleManager::RegisterModule(arpTableModule);
+	IpRouteTableModule * ipRouteTableModule = new IpRouteTableModule(L"IP路由表");
+	ModuleManager::RegisterModule(ipRouteTableModule);
 	ModifyHostModule * modifyInfoModule = new ModifyHostModule(L"编辑主机");
 	ModuleManager::RegisterModule(modifyInfoModule);
 	DeleteHostModule * deleteInfoModule = new DeleteHostModule(L"删除主机");

@@ -105,6 +105,9 @@
     <ClInclude Include="include\MySnmp\View\Module.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
+    <ClInclude Include="include\MySnmp\View\FrmListCtrlBase.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Config.cpp">
@@ -171,6 +174,12 @@
       <Filter>源文件\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\ARPTableModule.cpp">
+      <Filter>源文件\View\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IpRouteTableModulecpp.cpp">
+      <Filter>源文件\View\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FrmListCtrlBase.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
   </ItemGroup>

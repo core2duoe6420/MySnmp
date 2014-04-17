@@ -1,39 +1,27 @@
 #include <MySnmp/View/Module.h>
+#include <MySnmp/View/FrmListCtrlBase.h>
 #include <MySnmp/Command/HostCommand.h>
 #include <MySnmp/Command/SnmpRequestCommand.h>
 
 #include <wx/wx.h>
-#include <wx/listctrl.h>
 #include <wx/busyinfo.h>
 
 #include <MySnmp/debug.h>
 
 namespace mysnmp {
-	class FrmInterface : public wxFrame {
+	class FrmInterface : public FrmListCtrlBase {
 	private:
 		int lastRequestId;
 		InterfaceModule * module;
 		TopoHost * chosenHost;
 
-		wxListCtrl * iflist;
-		wxButton * btnRefresh;
-		wxButton * btnResend;
-		wxButton * btnClose;
-		wxTimer * timer;
-
 		int ifNumber;
 		//这个函数会死循环至获得ifNumber的值
 		int getIfNumber();
-		void sendInterfaceRequest();
-		void updateListCtrl();
-		void eventInitialize();
+		virtual void sendRequest();
+		virtual void updateListCtrl();
 
-		void OnResendClick(wxCommandEvent& event);
-		void OnCloseClick(wxCommandEvent& event);
-		void OnRefreshClick(wxCommandEvent& event);
-		void OnTimer(wxTimerEvent& event);
-		void OnClose(wxCloseEvent& event);
-		void OnListDoubleClick(wxListEvent& event);
+		virtual void OnListDoubleClick(wxListEvent& event);
 
 	public:
 		FrmInterface(InterfaceModule * module);
@@ -57,40 +45,15 @@ InterfaceModule::~InterfaceModule() {
 }
 
 FrmInterface::FrmInterface(InterfaceModule * module) :
-wxFrame(module->GetCanvas()->GetParent(), wxID_ANY, "", wxDefaultPosition, wxSize(800, 400),
-wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION),
-module(module) {
-	this->Center();
+FrmListCtrlBase(module->GetCanvas()->GetParent(), "", wxSize(800, 400)), module(module) {
 	chosenHost = module->GetCanvas()->GetChosenHost();
 	this->SetTitle(chosenHost->GetName() + L" 接口信息");
 
-	this->SetBackgroundColour(*wxWHITE);
-	wxBoxSizer * topSizer = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer * buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	iflist = new wxListCtrl(this, wxID_ANY, wxDefaultPosition,
-							wxDefaultSize, wxLC_REPORT);
-	topSizer->Add(iflist, 1, wxEXPAND);
-	topSizer->Add(buttonSizer, 0, wxFIXED_MINSIZE | wxALIGN_RIGHT);
-
-	btnRefresh = new wxButton(this, wxID_ANY, L"刷新");
-	buttonSizer->Add(btnRefresh, 0, wxALL, 10);
-	btnResend = new wxButton(this, wxID_ANY, L"重发");
-	buttonSizer->Add(btnResend, 0, wxALL, 10);
-	btnClose = new wxButton(this, wxID_CANCEL, L"关闭");
-	buttonSizer->Add(btnClose, 0, wxALL, 10);
-
-	int ret;
 	XMLColumnCollection * columns = module->GetColumnCollection();
 	for (int i = 0; i < columns->GetColumnCount(); i++) {
-		iflist->InsertColumn(i, columns->GetColumn(i)->GetName());
-		iflist->SetColumnWidth(i, columns->GetColumn(i)->GetSize());
+		list->InsertColumn(i, columns->GetColumn(i)->GetName());
+		list->SetColumnWidth(i, columns->GetColumn(i)->GetSize());
 	}
-
-	timer = new wxTimer(this, wxID_ANY);
-	timer->Start(2000);
-	this->SetSizer(topSizer);
-	btnRefresh->SetDefault();
-	this->eventInitialize();
 
 	//先获取接口数量
 	ifNumber = this->getIfNumber();
@@ -101,14 +64,15 @@ module(module) {
 		this->Close();
 	}
 	for (int i = 0; i < ifNumber; i++)
-		iflist->InsertItem(i, "");
-	sendInterfaceRequest();
+		list->InsertItem(i, "");
+
+	sendRequest();
 	updateListCtrl();
 }
 
 void FrmInterface::OnListDoubleClick(wxListEvent& event) {
 	int ifIndex = event.GetIndex();
-	wxString statusStr = iflist->GetItemText(ifIndex, 6);
+	wxString statusStr = list->GetItemText(ifIndex, 6);
 	wxString choices[3];
 	choices[0] = L"启动";
 	choices[1] = L"关闭";
@@ -131,37 +95,6 @@ void FrmInterface::OnListDoubleClick(wxListEvent& event) {
 		}
 	}
 	choiceDialog->Destroy();
-}
-
-void FrmInterface::OnCloseClick(wxCommandEvent& event) {
-	this->Close();
-}
-
-void FrmInterface::OnRefreshClick(wxCommandEvent& event) {
-	this->updateListCtrl();
-}
-
-void FrmInterface::OnResendClick(wxCommandEvent& event) {
-	this->sendInterfaceRequest();
-}
-
-void FrmInterface::OnTimer(wxTimerEvent& event) {
-	this->updateListCtrl();
-}
-
-void FrmInterface::OnClose(wxCloseEvent& event) {
-	timer->Stop();
-	delete timer;
-	this->Destroy();
-}
-
-void FrmInterface::eventInitialize() {
-	this->Bind(wxEVT_BUTTON, &FrmInterface::OnCloseClick, this, btnClose->GetId());
-	this->Bind(wxEVT_BUTTON, &FrmInterface::OnRefreshClick, this, btnRefresh->GetId());
-	this->Bind(wxEVT_BUTTON, &FrmInterface::OnResendClick, this, btnResend->GetId());
-	this->Bind(wxEVT_TIMER, &FrmInterface::OnTimer, this, timer->GetId());
-	this->Bind(wxEVT_CLOSE_WINDOW, &FrmInterface::OnClose, this);
-	this->Bind(wxEVT_LIST_ITEM_ACTIVATED, &FrmInterface::OnListDoubleClick, this, iflist->GetId());
 }
 
 int FrmInterface::getIfNumber() {
@@ -190,7 +123,7 @@ int FrmInterface::getIfNumber() {
 	}
 }
 
-void FrmInterface::sendInterfaceRequest() {
+void FrmInterface::sendRequest() {
 	SnmpRequestCommand command(SnmpType::SNMP_WALK, chosenHost->GetHostId());
 	const char * oidstr = "1.3.6.1.2.1.2.2.1";
 	command.AddOid(oidstr);
@@ -208,6 +141,7 @@ void FrmInterface::updateListCtrl() {
 	const char * indexTree = "1.3.6.1.2.1.2.2.1.1";
 	GetOidSubtreeCommand indexCommand(chosenHost->GetHostId(), lastRequestId);
 	indexCommand.SetOid(oidpre);
+	indexCommand.Execute();
 	const std::vector<Snmp_pp::Vb>& vbs = indexCommand.GetResults();
 	std::vector<int> indics;
 	for (int i = 0; i < ifNumber; i++) {
@@ -242,8 +176,8 @@ void FrmInterface::updateListCtrl() {
 					value.Printf("%dMbps", v);
 				}
 			}
-			if (iflist->GetItemText(i, j) != value)
-				iflist->SetItem(i, j, value);
+			if (list->GetItemText(i, j) != value)
+				list->SetItem(i, j, value);
 		}
 	}
 }

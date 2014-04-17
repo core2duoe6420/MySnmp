@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipRoutTable>
+	<column name="目标地址" size="100"></column>
+	<column name="接口序号" size="60"></column>
+	<column name="度量值1" size="60"></column>
+	<column name="度量值2" size="60"></column>
+	<column name="度量值3" size="60"></column>
+	<column name="度量值4" size="60"></column>
+	<column name="下一跳地址" size="100"></column>
+	<column name="路由类型" size="80">
+		<map key="1" value="other" />
+		<map key="2" value="invalid" />
+		<map key="3" value="direct" />
+		<map key="4" value="indirect" />
+	</column>
+	<column name="路由算法" size="100">
+		<map key="1" value="other" />
+		<map key="2" value="local" />
+		<map key="3" value="netmgmt" />
+		<map key="4" value="icmp" />
+		<map key="5" value="egp" />
+		<map key="6" value="ggp" />
+		<map key="7" value="hello" />
+		<map key="8" value="rip" />
+		<map key="9" value="is-is" />
+		<map key="10" value="es-is" />
+		<map key="11" value="ciscoIgrp" />
+		<map key="12" value="bbnSpfIgp" />
+		<map key="13" value="ospf" />
+		<map key="14" value="bgp" />
+	</column>
+	<column name="年龄" size="80"></column>
+	<column name="掩码" size="100"></column>
+	<column name="度量值5" size="60"></column>
+	<column name="信息oid" size="80"></column>
+</ipRoutTable>
