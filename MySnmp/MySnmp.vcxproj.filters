@@ -176,10 +176,10 @@
     <ClCompile Include="src\FrmListCtrlBase.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="src\IpModulecpp.cpp">
+    <ClCompile Include="src\TcpModule.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="src\TcpModule.cpp">
+    <ClCompile Include="src\IpModule.cpp">
       <Filter>源文件\View\Modules</Filter>
     </ClCompile>
   </ItemGroup>

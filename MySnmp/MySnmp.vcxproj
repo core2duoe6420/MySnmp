@@ -111,7 +111,7 @@
     <ClCompile Include="src\HostInfoModule.cpp" />
     <ClCompile Include="src\HostManager.cpp" />
     <ClCompile Include="src\InterfaceModule.cpp" />
-    <ClCompile Include="src\IpModulecpp.cpp" />
+    <ClCompile Include="src\IpModule.cpp" />
     <ClCompile Include="src\ModifyHostModule.cpp" />
     <ClCompile Include="src\Module.cpp" />
     <ClCompile Include="src\SnmpApp.cpp" />
