@@ -104,7 +104,6 @@
     <ClInclude Include="include\MySnmp\View\Module.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ARPTableModule.cpp" />
     <ClCompile Include="src\DeleteHostModule.cpp" />
     <ClCompile Include="src\DiaHostInfo.cpp" />
     <ClCompile Include="src\FrmListCtrlBase.cpp" />
@@ -112,7 +111,7 @@
     <ClCompile Include="src\HostInfoModule.cpp" />
     <ClCompile Include="src\HostManager.cpp" />
     <ClCompile Include="src\InterfaceModule.cpp" />
-    <ClCompile Include="src\IpRouteTableModulecpp.cpp" />
+    <ClCompile Include="src\IpModulecpp.cpp" />
     <ClCompile Include="src\ModifyHostModule.cpp" />
     <ClCompile Include="src\Module.cpp" />
     <ClCompile Include="src\SnmpApp.cpp" />
@@ -126,6 +125,7 @@
     <ClCompile Include="src\SnmpGetRequest.cpp" />
     <ClCompile Include="src\SnmpRequestCommand.cpp" />
     <ClCompile Include="src\SnmpSetRequest.cpp" />
+    <ClCompile Include="src\TcpModule.cpp" />
     <ClCompile Include="src\Thread.cpp" />
     <ClCompile Include="src\TopoCanvas.cpp" />
   </ItemGroup>

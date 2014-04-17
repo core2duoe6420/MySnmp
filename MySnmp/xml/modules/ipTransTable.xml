@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipTransTable>
+	<column name="接口序号" size="60"></column>
+	<column name="物理地址" size="140"></column>
+	<column name="网络地址" size="120"></column>
+	<column name="类型" size="60">
+		<map key="1" value="other" />
+		<map key="2" value="invalid" />
+		<map key="3" value="dynamic" />
+		<map key="4" value="static" />
+	</column>
+</ipTransTable>

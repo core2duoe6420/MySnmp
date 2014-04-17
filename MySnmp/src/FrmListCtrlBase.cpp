@@ -6,16 +6,18 @@
 
 using namespace mysnmp;
 
+//FrmListCtrlBase
+
 FrmListCtrlBase::FrmListCtrlBase(wxWindow * parent, const wxString& title, wxSize size) :
 wxFrame(parent, wxID_ANY, title, wxDefaultPosition, size, wxMINIMIZE_BOX | wxCLOSE_BOX | wxCAPTION) {
-	
+
 	this->Center();
 
 	this->SetBackgroundColour(*wxWHITE);
 	wxBoxSizer * topSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer * buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	list = new wxListCtrl(this, wxID_ANY, wxDefaultPosition,
-							wxDefaultSize, wxLC_REPORT);
+						  wxDefaultSize, wxLC_REPORT);
 	topSizer->Add(list, 1, wxEXPAND);
 	topSizer->Add(buttonSizer, 0, wxFIXED_MINSIZE | wxALIGN_RIGHT);
 
@@ -27,7 +29,7 @@ wxFrame(parent, wxID_ANY, title, wxDefaultPosition, size, wxMINIMIZE_BOX | wxCLO
 	buttonSizer->Add(btnClose, 0, wxALL, 10);
 
 	timer = new wxTimer(this, wxID_ANY);
-	timer->Start(2000);
+	timer->Start(1000);
 	this->SetSizer(topSizer);
 	btnRefresh->SetDefault();
 	this->eventInitialize();
@@ -65,3 +67,68 @@ void FrmListCtrlBase::OnClose(wxCloseEvent& event) {
 }
 
 void FrmListCtrlBase::OnListDoubleClick(wxListEvent& event) {}
+
+//FrmSnmpTableBase
+#include <MySnmp/Command/SnmpRequestCommand.h>
+#include <MySnmp/Command/HostCommand.h>
+
+FrmSnmpTableBase::FrmSnmpTableBase(TableModule * module, const char * oidpre, const wxString& caption, wxSize size) :
+FrmListCtrlBase(module->GetCanvas()->GetParent(), "", size), module(module), oidpre(oidpre) {
+	chosenHost = module->GetCanvas()->GetChosenHost();
+	this->SetTitle(chosenHost->GetName() + caption);
+
+	XMLColumnCollection * columns = module->GetColumnCollection();
+	for (int i = 0; i < columns->GetColumnCount(); i++) {
+		list->InsertColumn(i, columns->GetColumn(i)->GetName());
+		list->SetColumnWidth(i, columns->GetColumn(i)->GetSize());
+	}
+	sendRequest();
+	updateListCtrl();
+}
+
+void FrmSnmpTableBase::sendRequest() {
+	SnmpRequestCommand command(SnmpType::SNMP_WALK, chosenHost->GetHostId());
+	command.AddOid(oidpre);
+	lastRequestId = command.Execute();
+}
+
+void FrmSnmpTableBase::updateListCtrl() {
+	GetOidSubtreeCommand command(chosenHost->GetHostId(), lastRequestId);
+	command.SetOid(oidpre);
+	command.Execute();
+	const std::vector<Snmp_pp::Vb>& vbs = command.GetResults();
+
+	int rows = 0, columns;
+	for (; rows < vbs.size(); rows++) {
+		if (vbs[rows].get_oid()[9] != 1)
+			break;
+	}
+	if (rows != 0)
+		columns = vbs.size() / rows;
+
+	if (rows != list->GetItemCount()) {
+		list->DeleteAllItems();
+		for (int i = 0; i < rows; i++)
+			list->InsertItem(i, "");
+	}
+
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < columns; j++) {
+			wxString value = vbs[i + rows*j].get_printable_value();
+			int colidx = vbs[i + rows*j].get_oid()[9] - 1;
+			const ColumnInfo * column = module->GetColumnCollection()->GetColumn(colidx);
+			if (column->HasValueMap() && value != "") {
+				value = column->MapValueToString(wxAtoi(value));
+			} else	if (column->GetName() == L"物理地址") {
+				//SNMP++的bug，物理地址会显示多余的奇怪字符串
+				value = value.Mid(0, 19);
+			} else if (column->GetName() == L"速率") {
+				int v = wxAtoi(value) / 1000000;
+				value.Printf("%dMbps", v);
+			}
+
+			if (list->GetItemText(i, colidx) != value)
+				list->SetItem(i, colidx, value);
+		}
+	}
+}

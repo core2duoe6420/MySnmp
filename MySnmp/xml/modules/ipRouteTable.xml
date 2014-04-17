@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ipRoutTable>
-	<column name="目标地址" size="100"></column>
+	<column name="目标地址" size="120"></column>
 	<column name="接口序号" size="60"></column>
 	<column name="度量值1" size="60"></column>
 	<column name="度量值2" size="60"></column>
@@ -30,7 +30,7 @@
 		<map key="14" value="bgp" />
 	</column>
 	<column name="年龄" size="80"></column>
-	<column name="掩码" size="100"></column>
+	<column name="掩码" size="120"></column>
 	<column name="度量值5" size="60"></column>
 	<column name="信息oid" size="80"></column>
 </ipRoutTable>

@@ -166,6 +166,59 @@
 									<node index="0" name="0" desc="" type="value" syntax="counter" />
 								</node>
 							</node>
+							<node index="6" name="tcp" desc="" type="node">
+								<node index="1" name="tcpRtoAlgorithm" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="2" name="tcpRtoMin" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="3" name="tcpRtoMax" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="4" name="tcpMaxConn" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="integer" />
+								</node>
+								<node index="5" name="tcpActiveOpens" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="6" name="tcpPassiveOpens" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="7" name="tcpAttemptFails" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="8" name="tcpEstabResets" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="9" name="tcpCurrEstab" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="10" name="tcpInSegs" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="11" name="tcpOutSegs" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="12" name="tcpRetransSegs" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="13" name="tcpConnTable" desc="" type="table" access="not-accessible" status="mandotory" syntax="sequence">
+									<node index="1" name="tcpConnEntry" desc="" type="entry" access="not-accessible" status="mandotory" syntax="entry">
+										<node index="1" name="tcpConnStat" desc="" type="column" access="read_write" status="read_write" syntax="integer" />
+										<node index="2" name="tcpConnLocalAddress" desc="" type="column" access="read_only" status="mandotory" syntax="ipaddress" />
+										<node index="3" name="tcpConnLocalPort" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
+										<node index="4" name="tcpConnRemAddress" desc="" type="column" access="read_only" status="mandotory" syntax="ipaddress" />
+										<node index="5" name="tcpConnRemPort" desc="" type="column" access="read_only" status="mandotory" syntax="integer" />
+									</node>
+								</node>
+								<node index="14" name="tcpInErrs" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+								<node index="15" name="tcpOutRsts" desc="" type="scalar" access="read_only" status="mandatory">
+									<node index="0" name="0" desc="" type="value" syntax="counter" />
+								</node>
+							</node>
 						</node>
 					</node>
 				</node>

@@ -98,13 +98,10 @@ namespace mysnmp {
 
 			module->SetCanvas(singleton.canvas);
 			canvasPopMenu->Append(moduleMenuItem);
-
 		}
-
 	};
 
 	class HostInfoModule : public Module {
-	private:
 	public:
 		HostInfoModule(const wxString& menuLabel) :
 			Module(menuLabel) {}
@@ -113,7 +110,6 @@ namespace mysnmp {
 	};
 
 	class ModifyHostModule : public Module {
-	private:
 	public:
 		ModifyHostModule(const wxString& menuLabel) :
 			Module(menuLabel) {}
@@ -122,7 +118,6 @@ namespace mysnmp {
 	};
 
 	class DeleteHostModule : public Module {
-	private:
 	public:
 		DeleteHostModule(const wxString& menuLabel) :
 			Module(menuLabel) {}
@@ -130,32 +125,59 @@ namespace mysnmp {
 		virtual void OnMenuItemClick(wxCommandEvent& event);
 	};
 
-	class InterfaceModule : public Module {
+	/* 显示并请求一个SNMP表对象的模块的基类 */
+	class TableModule : public Module {
 	private:
 		XMLColumnCollection * columnInfos;
 	public:
-		InterfaceModule(const wxString& menuLabel);
-		~InterfaceModule();
-		virtual void OnMenuItemClick(wxCommandEvent& event);
+		TableModule(const char * xmlColumnsPath, const wxString& menuLabel) : Module(menuLabel) {
+			int ret = 0;
+			columnInfos = new XMLColumnCollection(xmlColumnsPath, ret);
+		}
+		virtual ~TableModule() { delete columnInfos; }
 		XMLColumnCollection * GetColumnCollection() const { return columnInfos; }
 	};
 
-	class ARPTableModule : public Module {
+	class InterfaceModule : public TableModule {
 	public:
-		ARPTableModule(const wxString& menuLabel) :
-			Module(menuLabel) {}
-
+		InterfaceModule(const wxString& menuLabel) :
+			TableModule("xml/modules/interface.xml", menuLabel) {}
 		virtual void OnMenuItemClick(wxCommandEvent& event);
 	};
 
-	class IpRouteTableModule : public Module {
-	private:
-		XMLColumnCollection * columnInfos;
+	class IpRouteTableModule : public TableModule {
 	public:
-		IpRouteTableModule(const wxString& menuLabel);
-		~IpRouteTableModule();
+		IpRouteTableModule(const wxString& menuLabel) :
+			TableModule("xml/modules/ipRouteTable.xml", menuLabel) {}
 		virtual void OnMenuItemClick(wxCommandEvent& event);
-		XMLColumnCollection * GetColumnCollection() const { return columnInfos; }
+	};
+
+	class IpAddrTableModule : public TableModule {
+	public:
+		IpAddrTableModule(const wxString& menuLabel) :
+			TableModule("xml/modules/ipAddrTable.xml", menuLabel) {}
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
+	class IpTransTableModule : public TableModule {
+	public:
+		IpTransTableModule(const wxString& menuLabel) :
+			TableModule("xml/modules/ipTransTable.xml", menuLabel) {}
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
+	class IpBasicModule : public TableModule {
+	public:
+		IpBasicModule(const wxString& menuLabel) :
+			TableModule("xml/modules/ipBasic.xml", menuLabel) {}
+		virtual void OnMenuItemClick(wxCommandEvent& event);
+	};
+
+	class TcpConnTableModule : public TableModule {
+	public:
+		TcpConnTableModule(const wxString& menuLabel) :
+			TableModule("xml/modules/tcpConnTable.xml", menuLabel) {}
+		virtual void OnMenuItemClick(wxCommandEvent& event);
 	};
 
 }

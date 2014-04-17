@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
 	<column name="序号" size="40"></column>
-	<column name="描述" size="60"></column>
+	<column name="描述" size="120"></column>
 	<column name="类型" size="120">
 		<map key="1" value="other" />          
 		<map key="2" value="regular1822" />
@@ -38,7 +38,7 @@
 	</column>
 	<column name="MTU" size="60"></column>
 	<column name="速率" size="80"></column>
-	<column name="物理地址" size="130"></column>
+	<column name="物理地址" size="140"></column>
 	<column name="管理状态" size="60">
 		<map key="1" value="启动" />
 		<map key="2" value="关闭" />

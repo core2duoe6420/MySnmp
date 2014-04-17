@@ -161,7 +161,7 @@ void * SnmpWalkRequest::Run(void * data) {
 			Vb vb(oid);
 			pdu.set_vb(vb, 0);
 			int snmpErrStatus = 0;
-			while ((snmpErrStatus = snmp.get_bulk(pdu, target, 0, 10)) == SNMP_CLASS_SUCCESS) {
+			while ((snmpErrStatus = snmp.get_bulk(pdu, target, 0, 20)) == SNMP_CLASS_SUCCESS) {
 				bool end = false;
 				result->ClearVb();
 				for (int i = 0; i < pdu.get_vb_count(); i++) {

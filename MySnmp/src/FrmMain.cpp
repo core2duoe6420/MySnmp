@@ -77,10 +77,16 @@ void FrmMain::modulesInitialize() {
 	ModuleManager::RegisterModule(hostInfoModule);
 	InterfaceModule * interfaceModule = new InterfaceModule(L"接口信息");
 	ModuleManager::RegisterModule(interfaceModule);
-	ARPTableModule * arpTableModule = new ARPTableModule(L"ARP表");
-	ModuleManager::RegisterModule(arpTableModule);
+	IpBasicModule * ipBasicModule = new IpBasicModule(L"IP基本信息");
+	ModuleManager::RegisterModule(ipBasicModule);
+	IpAddrTableModule * ipAddrTableModule = new IpAddrTableModule(L"IP地址表");
+	ModuleManager::RegisterModule(ipAddrTableModule);
 	IpRouteTableModule * ipRouteTableModule = new IpRouteTableModule(L"IP路由表");
 	ModuleManager::RegisterModule(ipRouteTableModule);
+	IpTransTableModule * ipTransTableModule = new IpTransTableModule(L"IP转换表");
+	ModuleManager::RegisterModule(ipTransTableModule);
+	TcpConnTableModule * tcpConnTableModule = new TcpConnTableModule(L"TCP连接表");
+	ModuleManager::RegisterModule(tcpConnTableModule);
 	ModifyHostModule * modifyInfoModule = new ModifyHostModule(L"编辑主机");
 	ModuleManager::RegisterModule(modifyInfoModule);
 	DeleteHostModule * deleteInfoModule = new DeleteHostModule(L"删除主机");

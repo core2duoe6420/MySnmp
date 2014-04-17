@@ -77,6 +77,8 @@ OidSyntaxEnum OidNode::GetSyntaxEnum(const char * syntaxStr) {
 		return OidSyntaxEnum::SYNTAX_SEQUENCE;
 	if (strcmp(syntaxStr, "entry") == 0)
 		return OidSyntaxEnum::SYNTAX_ENTRY;
+	if (strcmp(syntaxStr, "ipaddress") == 0)
+		return OidSyntaxEnum::SYNTAX_IPADDRESS;
 	return OidSyntaxEnum::SYNTAX_NONE;
 }
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tcpRouteTable>
+	<column name="连接状态" size="120">
+		<map key="1" value="closed" />
+		<map key="2" value="listen" />
+		<map key="3" value="synSent" />
+		<map key="4" value="synReceived" />
+		<map key="5" value="established" />
+		<map key="6" value="finWait1" />
+		<map key="7" value="finWait2" />
+		<map key="8" value="closeWait" />
+		<map key="9" value="lastAck" />
+		<map key="10" value="closing" />
+		<map key="11" value="timeWait" />
+		<map key="12" value="deleteTCB" />
+	</column>
+	<column name="本地地址" size="120"></column>
+	<column name="本地端口" size="60"></column>
+	<column name="远程地址" size="120"></column>
+	<column name="远程端口" size="60"></column>
+</tcpRouteTable>

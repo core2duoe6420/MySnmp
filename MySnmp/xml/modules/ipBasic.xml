@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipBasic>
+	<column name="是否转发" size="0">
+		<map key="1" value="是" />
+		<map key="2" value="否" />
+	</column>
+	<column name="默认TTL" size="0"></column>
+	<column name="接收的报文数" size="0"></column>
+	<column name="硬错误数" size="0"></column>
+	<column name="IP地址错误导致的接收报文丢失" size="0"></column>
+	<column name="转发的报文数" size="0"></column>
+	<column name="未知协议导致的接收报文丢失" size="0"></column>
+	<column name="其他原因导致的接收报文丢失" size="0"></column>
+	<column name="成功接收的报文数" size="0"></column>
+	<column name="发送的报文数" size="0"></column>
+	<column name="其他原因导致的发送报文丢失" size="0"></column>
+	<column name="路由错误导致的发送报文丢失" size="0"></column>
+	<column name="重组报文等待的最长时间" size="0"></column>
+	<column name="需要重组的IP分片" size="0"></column>
+	<column name="重组成功的报文数" size="0"></column>
+	<column name="重组失败的报文数" size="0"></column>
+	<column name="分片成功的报文数" size="0"></column>
+	<column name="分片失败的报文数" size="0"></column>
+	<column name="创建的分片数" size="0"></column>
+</ipBasic>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipAddrTable>
+	<column name="IP地址" size="120"></column>
+	<column name="接口序号" size="60"></column>
+	<column name="掩码" size="120"></column>
+	<column name="广播位数" size="60"></column>
+	<column name="最大分片" size="60"></column>
+</ipAddrTable>

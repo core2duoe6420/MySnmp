@@ -74,24 +74,21 @@ void FrmHostInfo::OnListDoubleClick(wxListEvent& event) {
 
 void FrmHostInfo::sendRequest() {
 	SnmpRequestCommand command(SnmpType::SNMP_GET, chosenHost->GetHostId());
-	char oidstr[] = "1.3.6.1.2.1.1.1.0";
-	int pos = strlen(oidstr) - 3;
+	Snmp_pp::Oid oid("1.3.6.1.2.1.1.1.0");
 	for (int i = 1; i < 8; i++) {
-		oidstr[pos] = i + '0';
-		command.AddOid(oidstr);
+		oid[7] = i;
+		command.AddOid(oid.get_printable());
 	}
 	command.Execute();
 }
 
 void FrmHostInfo::updateListCtrl() {
 	GetHostOidCommand command(chosenHost->GetHostId());
-	char oidstr[] = "1.3.6.1.2.1.1.1.0";
-	/* 倒数第三个字符用于在system下切换 */
-	int pos = strlen(oidstr) - 3;
+	Snmp_pp::Oid oid("1.3.6.1.2.1.1.1.0");
 
 	for (int i = 0; i < 7; i++) {
-		oidstr[pos] = i + 1 + '0';
-		command.SetOid(oidstr);
+		oid[7] = i + 1;
+		command.SetOid(oid.get_printable());
 		command.Execute();
 		list->SetItem(i, 1, command.GetResult());
 	}
