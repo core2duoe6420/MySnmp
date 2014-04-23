@@ -22,7 +22,19 @@ namespace mysnmp {
 
 		wxMenu * GetPopMenu() { return menuPop; }
 
+		bool LoadFromXml(const wxString& xmlfile);
+		bool SaveToXml(const wxString& xmlfile);
+
+		bool IsChanged() const { return isChanged; }
+		bool HasSavedToFile() const { return xmlfile != wxEmptyString; }
+		const wxString& GetXmlFile() const { return xmlfile; }
+		void SetChanged() { isChanged = true; }
+
 	private:
+		/* 下面两个字段用于保存和读取拓扑 */
+		bool isChanged;
+		wxString xmlfile;
+
 		wxList topoHosts;
 
 		TopoHost * findTopoHost(const wxPoint& pt);

@@ -174,7 +174,7 @@ bool DiaHostInfo::TransferDataFromWindow() {
 	strVersion = cbVersion->GetValue();
 	intRetry = wxAtoi(cbRetry->GetValue());
 	intUDPPort = wxAtoi(txtUDPPort->GetValue());
-	intTimeout = wxAtoi(cbTimeout->GetValue().Mid(0, 1)) * 100;
+	intTimeout = wxAtoi(cbTimeout->GetValue().Mid(0, 1));
 
 	return true;
 }

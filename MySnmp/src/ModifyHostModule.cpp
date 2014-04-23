@@ -26,5 +26,6 @@ void ModifyHostModule::OnMenuItemClick(wxCommandEvent& event) {
 			topoHost->SetName(dialog->GetName());
 			canvas->RefreshCanvas();
 		}
+		canvas->SetChanged();
 	}
 }

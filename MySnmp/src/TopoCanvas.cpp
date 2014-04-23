@@ -61,7 +61,8 @@ TopoHost::TopoHost(int hostId, const wxBitmap& bitmap, const wxPoint& point,
 }
 
 TopoCanvas::TopoCanvas(wxWindow * parent, const wxSize& virtualSize, int scrollRate) :
-wxScrolledCanvas(parent), scrollRate(scrollRate), dragStatus(0), chosenTopoHost(NULL) {
+wxScrolledCanvas(parent), scrollRate(scrollRate), dragStatus(0), chosenTopoHost(NULL),
+xmlfile(wxEmptyString), isChanged(false) {
 	this->SetVirtualSize(virtualSize);
 	this->SetScrollRate(scrollRate, scrollRate);
 
@@ -103,6 +104,7 @@ bool TopoCanvas::RemoveHost(int hostId) {
 	if (node) {
 		topoHosts.DeleteNode(node);
 		delete host;
+		this->SetChanged();
 		return true;
 	}
 	return false;
@@ -158,6 +160,7 @@ void TopoCanvas::OnMouseEvents(wxMouseEvent& event) {
 		}
 		RefreshCanvas();
 	} else if (event.Dragging() && dragStatus != TEST_DRAG_NONE) {
+		this->SetChanged();
 		if (dragStatus == TEST_DRAG_START) {
 			int tolerance = 2;
 			wxPoint eventLogicalPoint = CalcUnscrolledPosition(event.GetPosition());
@@ -224,6 +227,7 @@ void TopoCanvas::DrawBitmap(int hostId, const wxBitmap& host,
 	TopoHost * topoHost = new TopoHost(hostId, host, point, this, ipAddress, name);
 	topoHosts.Append(topoHost);
 	RefreshCanvas();
+	this->SetChanged();
 }
 
 void TopoCanvas::OnSize(wxSizeEvent& event) {
@@ -271,4 +275,103 @@ void TopoCanvas::RefreshCanvas() {
 		node = node->GetNext();
 	}
 	//this->Update();
+}
+
+/* 保存和读取拓扑 */
+
+#include <MySnmp/Command/HostCommand.h>
+#include <wx/xml/xml.h>
+
+bool TopoCanvas::LoadFromXml(const wxString& xmlfile) {
+	/* 读取拓扑前先删除现有的Host */
+	wxList::compatibility_iterator node = topoHosts.GetFirst();
+	while (node) {
+		TopoHost * topoHost = (TopoHost*)node->GetData();
+		DeleteHostCommand command(topoHost->GetHostId());
+		command.Execute();
+		delete topoHost;
+		node = node->GetNext();
+	}
+	topoHosts.Clear();
+	RefreshCanvas();
+
+	wxXmlDocument xmlDoc(xmlfile);
+	wxXmlNode * root = xmlDoc.GetRoot();
+	if (root->GetName() != "topo")
+		return false;
+	/* 设置虚拟画布大小 */
+	wxSize size;
+	size.SetWidth(wxAtoi(root->GetAttribute("width")));
+	size.SetHeight(wxAtoi(root->GetAttribute("height")));
+	this->SetVirtualSize(size);
+	this->Scroll(0, 0);
+	/* 添加主机 */
+	wxXmlNode * xmlnode = root->GetChildren();
+	while (xmlnode) {
+		if (xmlnode->GetType() == wxXML_ELEMENT_NODE && xmlnode->GetName() == "host") {
+			wxString ipaddress = xmlnode->GetAttribute("ip");
+			AddHostCommand command;
+			command.SetIpAddress(ipaddress);
+			command.SetReadCommunity(xmlnode->GetAttribute("rcommunity"));
+			command.SetWriteCommunity(xmlnode->GetAttribute("wcommunity"));
+			command.SetRetryTimes(wxAtoi(xmlnode->GetAttribute("retry")));
+			command.SetTimeout(wxAtoi(xmlnode->GetAttribute("timeout")));
+			command.SetUdpPort(wxAtoi(xmlnode->GetAttribute("udpport")));
+			command.SetSnmpVersion(xmlnode->GetAttribute("version"));
+			int hostid = command.Execute();
+
+			wxPoint point;
+			point.x = wxAtoi(xmlnode->GetAttribute("pointx"));
+			point.y = wxAtoi(xmlnode->GetAttribute("pointy"));
+			wxString name = xmlnode->GetAttribute("name");
+			this->DrawBitmap(hostid, wxBitmap("image/Host.png", wxBITMAP_TYPE_PNG), point, ipaddress, name);
+		}
+		xmlnode = xmlnode->GetNext();
+	}
+
+	this->xmlfile = xmlfile;
+	this->isChanged = false;
+	return true;
+}
+
+bool TopoCanvas::SaveToXml(const wxString& xmlfile) {
+	wxString value;
+	wxXmlDocument xmlDoc;
+	wxXmlNode * docNode = new wxXmlNode(wxXML_DOCUMENT_NODE, "");
+	xmlDoc.SetDocumentNode(docNode);
+	wxXmlNode * root = new wxXmlNode(docNode, wxXML_ELEMENT_NODE, "topo");
+	value.Printf("%d", this->GetVirtualSize().GetWidth());
+	root->AddAttribute("width", value);
+	value.Printf("%d", this->GetVirtualSize().GetHeight());
+	root->AddAttribute("height", value);
+
+	wxList::compatibility_iterator node = topoHosts.GetFirst();
+
+	while (node) {
+		TopoHost * topoHost = (TopoHost*)node->GetData();
+		wxXmlNode * hostXmlNode = new wxXmlNode(root, wxXML_ELEMENT_NODE, "host");
+		value.Printf("%d", topoHost->GetHostId());
+		hostXmlNode->AddAttribute("id", value);
+		hostXmlNode->AddAttribute("name", topoHost->GetName());
+		value.Printf("%d", topoHost->point.x);
+		hostXmlNode->AddAttribute("pointx", value);
+		value.Printf("%d", topoHost->point.y);
+		hostXmlNode->AddAttribute("pointy", value);
+		HostInfoCommand command(topoHost->GetHostId(), HostInfoCommand::COMMAND_READ);
+		value.Printf("%d", command.GetUdpPort());
+		hostXmlNode->AddAttribute("udpport", value);
+		value.Printf("%d", command.GetTimeout());
+		hostXmlNode->AddAttribute("timeout", value);
+		value.Printf("%d", command.GetRetryTimes());
+		hostXmlNode->AddAttribute("retry", value);
+		hostXmlNode->AddAttribute("ip", command.GetIpAddress());
+		hostXmlNode->AddAttribute("rcommunity", command.GetReadCommunity());
+		hostXmlNode->AddAttribute("wcommunity", command.GetWriteCommunity());
+		hostXmlNode->AddAttribute("version", command.GetSnmpVersion());
+		node = node->GetNext();
+	}
+	xmlDoc.Save(xmlfile);
+	this->xmlfile = xmlfile;
+	this->isChanged = false;
+	return true;
 }

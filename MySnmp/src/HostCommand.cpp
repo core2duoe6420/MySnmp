@@ -10,7 +10,7 @@ using namespace mysnmp;
 
 void HostCommand::SetConfig(Host * host) {
 	HostConfig& config = host->GetConfig();
-	config.SetTimeout(timeout);
+	config.SetTimeout(timeout * 100);
 	config.SetRetryTimes(retry);
 	config.SetUDPPort(udpport);
 	config.SetReadCommunity(readcommunity.mb_str());
